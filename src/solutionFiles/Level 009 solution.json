@@ -1,0 +1,341 @@
+{
+  "solutionGrid": [
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "BLUE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "BLUE"
+        },
+        "light": {
+          "colour": "BLUE",
+          "orientation": "UP",
+          "xPos": 2,
+          "yPos": 0
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "colour": "BLUE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "UP",
+          "xPos": 2,
+          "yPos": 1
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "UP"
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "DOWN"
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 3
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 4
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 5
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 6
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 7
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 8
+        }
+      },
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 9
+        }
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ]
+  ],
+  "totalTime": 45,
+  "totalPermutations": 117600,
+  "attemptPermutations": 12176,
+  "permutationRatio": 10.35
+}

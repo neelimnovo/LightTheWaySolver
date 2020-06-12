@@ -1,0 +1,276 @@
+{
+  "title": "Level 001",
+  "gridLayout": {
+    "gridCellArray": [
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WHITE_RECEIVER"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ]
+    ],
+    "blueFilters": [],
+    "redFilters": [],
+    "yellowFilters": [],
+    "backMirrors": [],
+    "frontMirrors": [],
+    "lights": [
+      {
+        "orientation": "DOWN"
+      }
+    ],
+    "prisms": [],
+    "tJunctions": [],
+    "colourShifters": []
+  }
+}

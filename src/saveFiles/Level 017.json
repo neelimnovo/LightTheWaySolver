@@ -1,0 +1,327 @@
+{
+  "title": "Level 017",
+  "gridLayout": {
+    "gridCellArray": [
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "RED_RECEIVER"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "YELLOW_RECEIVER"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "YELLOW_RECEIVER"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "EMPTY"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
+      ]
+    ],
+    "lights": [
+      {
+        "orientation": "DOWN"
+      },
+      {
+        "orientation": "DOWN"
+      }
+    ],
+    "blueFilters": [],
+    "redFilters": [
+      {
+        "colour": "RED"
+      }
+    ],
+    "yellowFilters": [
+      {
+        "colour": "YELLOW"
+      }
+    ],
+    "backMirrors": [
+      {}
+    ],
+    "frontMirrors": [
+      {}
+    ],
+    "prisms": [],
+    "tJunctions": [
+      {
+        "orientation": "RIGHT"
+      }
+    ],
+    "colourShifters": []
+  }
+}
