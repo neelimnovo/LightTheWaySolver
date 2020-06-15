@@ -28,23 +28,20 @@ public class MainMenu extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         //Setup main stage
         primaryStage.setTitle("Search The Way");
         mainWindow = primaryStage;
 
         Button newLevelButton = new Button("Create new level");
+        newLevelButton.setStyle("-fx-background-radius: 30");
         changeButtonColour(newLevelButton, BUTTON_BLUE);
-        newLevelButton.setOnAction(event -> {
-            mainWindow.setScene(createLevelSetupScene());
-        });
+        newLevelButton.setOnAction(event -> mainWindow.setScene(createLevelSetupScene()));
 
 
         Button solveLevelButton = new Button("Load level");
         changeButtonColour(solveLevelButton, BUTTON_BLUE);
-        solveLevelButton.setOnAction(event -> {
-            mainWindow.setScene(createLevelLoaderScene());
-        });
+        solveLevelButton.setOnAction(event -> mainWindow.setScene(createLevelLoaderScene()));
 
         materialiseButton(newLevelButton);
 
@@ -52,8 +49,8 @@ public class MainMenu extends Application {
         GridPane mainMenuGridPane = new GridPane();
         mainMenuGridPane.setPadding(new Insets(30,30,30,50));
         mainMenuGridPane.setVgap(20);
-        mainMenuGridPane.setConstraints(newLevelButton, 0, 0);
-        mainMenuGridPane.setConstraints(solveLevelButton, 0, 1);
+        GridPane.setConstraints(newLevelButton, 0, 0);
+        GridPane.setConstraints(solveLevelButton, 0, 1);
         mainMenuGridPane.getChildren().addAll(newLevelButton, solveLevelButton);
         mainMenuGridPane.setStyle("-fx-background-color:" + SCENE_BLUE);
         mainMenuScene = new Scene(mainMenuGridPane, SCENE_WIDTH, SCENE_HEIGHT);
@@ -78,7 +75,8 @@ public class MainMenu extends Application {
         return result;
     }
 
-    //TODO make this work
+    // TODO make this work
+    // EFFECTS: Gives the javaFX button a material design-like aesthetic
     public static void materialiseButton(Button button) {
         button.setFont(Font.font ("file:resources/fonts/SourceSansPro-SemiBold.ttf", 18));
     }

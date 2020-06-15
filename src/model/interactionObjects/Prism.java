@@ -146,7 +146,7 @@ public class Prism extends DynamicGridObject {
                         prismRedLight = new Light(RED, DOWN, light.xPos, light.yPos + 1);
                         grid[light.xPos][light.yPos + 1].light = prismRedLight;
                     }
-                    if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
+                    if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
                         prismBlueLight = new Light(BLUE, RIGHT, light.xPos + 1, light.yPos);
                         grid[light.xPos + 1][light.yPos].light = prismBlueLight;
                     }
@@ -164,9 +164,9 @@ public class Prism extends DynamicGridObject {
                         prismBlueLight = new Light(BLUE, DOWN, light.xPos, light.yPos + 1);
                         grid[light.xPos][light.yPos + 1].light = prismBlueLight;
                     }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                        prismYellowLight = new Light(YELLOW, UP, light.xPos, light.yPos + 1);
-                        grid[light.xPos][light.yPos + 1].light = prismYellowLight;
+                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
+                        prismYellowLight = new Light(YELLOW, UP, light.xPos, light.yPos - 1);
+                        grid[light.xPos][light.yPos - 1].light = prismYellowLight;
                     }
                     break;
                 case RIGHT:
@@ -174,9 +174,9 @@ public class Prism extends DynamicGridObject {
                         prismRedLight = new Light(RED, RIGHT, light.xPos + 1, light.yPos);
                         grid[light.xPos + 1][light.yPos].light = prismRedLight;
                     }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                        prismBlueLight = new Light(BLUE, UP, light.xPos, light.yPos + 1);
-                        grid[light.xPos][light.yPos + 1].light = prismBlueLight;
+                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
+                        prismBlueLight = new Light(BLUE, UP, light.xPos, light.yPos - 1);
+                        grid[light.xPos][light.yPos - 1].light = prismBlueLight;
                     }
                     if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
                         prismYellowLight = new Light(YELLOW, DOWN, light.xPos, light.yPos + 1);

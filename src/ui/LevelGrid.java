@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import model.GridCell;
 import model.GridLayout;
@@ -407,6 +408,8 @@ public class LevelGrid {
             for (int y = 0; y < yDim; y++) {
                 Button gridItem = new Button("", readResourceImage("void.png"));
                 changeButtonColour(gridItem, "#492149");
+                gridItem.setMaxSize(25,25);
+                gridItem.setMinSize(25,25);
                 gridItem.setId("void");
                 gridItem.setOnAction(event -> {
                     switch (gridItem.getId()) {

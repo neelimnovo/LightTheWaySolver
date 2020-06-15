@@ -28,9 +28,7 @@ public class LevelSetup {
 
         Button processLevel = new Button("Create Level");
         changeButtonColour(processLevel, BUTTON_BLUE);
-        processLevel.setOnAction(event -> {
-            processLevel(xLength.getText(), yLength.getText());
-        });
+        processLevel.setOnAction(event -> processLevel(xLength.getText(), yLength.getText()));
 
         Button backLevelSetup = makeBackButton(mainMenuScene);
 

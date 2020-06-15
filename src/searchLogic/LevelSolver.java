@@ -3,9 +3,8 @@ package searchLogic;
 import javafx.util.Pair;
 import model.GridCell;
 import model.GridLayout;
-import model.interactionObjects.StaticGridObject;
-import model.interactionObjects.DynamicGridObject;
-import model.interactionObjects.LightSource;
+import model.interactionObjects.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,7 +58,7 @@ public class LevelSolver {
             DynamicGridObject dgo = dgoQueue.remove();
             ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, emptySpots);
             // System.out.println(dgoQueue + " " + dgoQueue.size());
-            System.out.println(dgo + " " + filteredEmptySpots.size());
+            // System.out.println(dgo + " " + filteredEmptySpots.size());
             // Collections.shuffle(filteredEmptySpots);
             for (Pair<Integer, Integer> spot : filteredEmptySpots) {
                 int spotX = spot.getKey();
@@ -117,7 +116,6 @@ public class LevelSolver {
             }
         System.out.println("Number of attempts: " + attemptPermutations);
         this.solutionGrid = grid;
-        // setupPermutationRatio(attemptPermutations, totalPermutations);
         System.out.println("found solution");
         //GridCell.printGridCell(solutionGrid);
         return true;
