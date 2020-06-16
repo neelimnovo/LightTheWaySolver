@@ -18,3 +18,6 @@ The app has stored solution for levels that can be solved in a reasonable amount
 
 The solution and solving statistics to each level can also be saved and displayed:
 ![](/resources/github/stats.PNG)
+
+
+The wiki explains the approach taken for solving the levels in the game. No copyright infrigement is intended, the app was made simply for a learning experience.
