@@ -1,1 +1,413 @@
-{"solutionGrid":[[{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY","cellDynamicItem":{},"light":{"colour":"WHITE","orientation":"UP","xPos":2,"yPos":1}},{"cellStaticItem":"EMPTY","cellDynamicItem":{"orientation":"LEFT"},"light":{"colour":"WHITE","orientation":"LEFT","xPos":2,"yPos":2}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":3}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":4}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":5}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":6}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":7}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":8}},{"cellStaticItem":"WHITE_RECEIVER","receiver":{"isPowered":true,"colour":"WHITE"},"light":{"colour":"WHITE","orientation":"DOWN","xPos":2,"yPos":9}}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":3,"yPos":1}},{"cellStaticItem":"EMPTY","cellDynamicItem":{"orientation":"LEFT"}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":4,"yPos":1}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WHITE_RECEIVER","receiver":{"isPowered":true,"colour":"WHITE"},"light":{"colour":"WHITE","orientation":"UP","xPos":5,"yPos":0}},{"cellStaticItem":"EMPTY","cellDynamicItem":{"orientation":"RIGHT"},"light":{"colour":"WHITE","orientation":"RIGHT","xPos":5,"yPos":1}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":2}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":3}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":4}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":5}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":6}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":7}},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":8}},{"cellStaticItem":"WHITE_RECEIVER","receiver":{"isPowered":true,"colour":"WHITE"},"light":{"colour":"WHITE","orientation":"DOWN","xPos":5,"yPos":9}}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"}]],"totalTime":1534,"totalPermutations":11703240,"attemptPermutations":1346947,"permutationRatio":11.51}
+{
+  "levelName": "Level 018",
+  "solutionGrid": [
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {},
+        "light": {
+          "colour": "WHITE",
+          "orientation": "UP",
+          "xPos": 2,
+          "yPos": 1
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "LEFT"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "LEFT",
+          "xPos": 2,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 3
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 4
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 5
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 6
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 7
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 8
+        }
+      },
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 2,
+          "yPos": 9
+        }
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 3,
+          "yPos": 1
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "LEFT"
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 4,
+          "yPos": 1
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "UP",
+          "xPos": 5,
+          "yPos": 0
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "RIGHT"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 5,
+          "yPos": 1
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 3
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 4
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 5
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 6
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 7
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 8
+        }
+      },
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "DOWN",
+          "xPos": 5,
+          "yPos": 9
+        }
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ]
+  ],
+  "totalTime": 1534,
+  "totalPermutations": 11703240,
+  "attemptPermutations": 1346947,
+  "permutationRatio": 11.51
+}

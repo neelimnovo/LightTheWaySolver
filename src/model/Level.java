@@ -22,7 +22,7 @@ public class Level {
         Gson gson = new Gson();
         Level loadedLevel = null;
         try {
-            FileReader fileReader = new FileReader("src\\saveFiles\\" + saveFileName+ ".json");
+            FileReader fileReader = new FileReader("src\\saveFiles\\" + saveFileName + ".json");
             JsonReader reader = new JsonReader(fileReader);
             loadedLevel = gson.fromJson(reader, Level.class);
         } catch (FileNotFoundException e) {

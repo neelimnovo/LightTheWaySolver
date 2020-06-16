@@ -61,6 +61,7 @@ public class LevelRender {
 
         Button storeStatsButton = new Button("Store level solution");
         storeStatsButton.setOnAction(event -> {
+            statistics.levelName = level.title;
             statistics.save(level.title);
         });
         changeButtonColour(storeStatsButton, BUTTON_BLUE);
@@ -94,10 +95,10 @@ public class LevelRender {
                                             ArrayList<Pair<Integer, Integer>> emptyPositions,
                                             ArrayList<Pair<Integer, Integer>> receiverPositions,
                                             LinkedList<DynamicGridObject> dgoQueue) {
-        LevelSolver solver = new LevelSolver(receiverPositions);
+        LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
         long startTime = System.currentTimeMillis();
-        solver.solveLevel(gridLayout.gridCellArray, emptyPositions,dgoQueue);
+        solver.solveLevel(gridLayout.gridCellArray, emptyPositions, dgoQueue);
         if (solver.solutionGrid != null) {
             totalTime = (System.currentTimeMillis() - startTime);
             statistics = new Stats(solver.solutionGrid, totalTime, solver.totalPermutations,

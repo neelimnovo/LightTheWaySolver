@@ -2,10 +2,7 @@ package model.interactionObjects;
 
 import javafx.util.Pair;
 import model.GridCell;
-import model.GridLayout;
 import searchLogic.Light;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 

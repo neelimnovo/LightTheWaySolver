@@ -1,4 +1,5 @@
 {
+  "levelName": "Level 004",
   "solutionGrid": [
     [
       {
@@ -411,8 +412,8 @@
       }
     ]
   ],
-  "totalTime": 5,
+  "totalTime": 2,
   "totalPermutations": 2756,
-  "attemptPermutations": 113,
-  "permutationRatio": 4.1
+  "attemptPermutations": 106,
+  "permutationRatio": 3.846
 }

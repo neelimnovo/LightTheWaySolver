@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import static ui.LevelLoader.createLevelLoaderScene;
 import static ui.LevelSetup.createLevelSetupScene;
+import static ui.LevelStats.createLevelStatsScene;
 
 public class MainMenu extends Application {
 
@@ -16,11 +17,12 @@ public class MainMenu extends Application {
     static Stage mainWindow;
     static Scene mainMenuScene;
     static Scene levelSetupScene;
+    static Scene levelStatsScene;
     static Scene levelGridScene;
     static Scene levelLoadScene;
     static Scene levelRenderScene;
-    static int SCENE_WIDTH = 1280;
-    static int SCENE_HEIGHT = 720;
+    final static int SCENE_WIDTH = 1280;
+    final static int SCENE_HEIGHT = 720;
 
     // constants for themes
     final static String BUTTON_BLUE = "#81b9bf";
@@ -38,10 +40,13 @@ public class MainMenu extends Application {
         changeButtonColour(newLevelButton, BUTTON_BLUE);
         newLevelButton.setOnAction(event -> mainWindow.setScene(createLevelSetupScene()));
 
-
         Button solveLevelButton = new Button("Load level");
         changeButtonColour(solveLevelButton, BUTTON_BLUE);
         solveLevelButton.setOnAction(event -> mainWindow.setScene(createLevelLoaderScene()));
+
+        Button showLevelStatsButton = new Button("Show level statistics");
+        changeButtonColour(showLevelStatsButton, BUTTON_BLUE);
+        showLevelStatsButton.setOnAction(event -> mainWindow.setScene(createLevelStatsScene()));
 
         materialiseButton(newLevelButton);
 
@@ -51,7 +56,8 @@ public class MainMenu extends Application {
         mainMenuGridPane.setVgap(20);
         GridPane.setConstraints(newLevelButton, 0, 0);
         GridPane.setConstraints(solveLevelButton, 0, 1);
-        mainMenuGridPane.getChildren().addAll(newLevelButton, solveLevelButton);
+        GridPane.setConstraints(showLevelStatsButton,0, 2);
+        mainMenuGridPane.getChildren().addAll(newLevelButton, solveLevelButton, showLevelStatsButton);
         mainMenuGridPane.setStyle("-fx-background-color:" + SCENE_BLUE);
         mainMenuScene = new Scene(mainMenuGridPane, SCENE_WIDTH, SCENE_HEIGHT);
         mainWindow.setScene(mainMenuScene);
@@ -76,7 +82,7 @@ public class MainMenu extends Application {
     }
 
     // TODO make this work
-    // EFFECTS: Gives the javaFX button a material design-like aesthetic
+    // EFFECTS: Gives the JavaFX button a material design-like aesthetic
     public static void materialiseButton(Button button) {
         button.setFont(Font.font ("file:resources/fonts/SourceSansPro-SemiBold.ttf", 18));
     }

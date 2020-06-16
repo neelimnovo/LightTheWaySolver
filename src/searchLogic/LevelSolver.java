@@ -6,7 +6,6 @@ import model.GridLayout;
 import model.interactionObjects.*;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -18,6 +17,7 @@ import static model.interactionObjects.FaceOrientation.*;
 public class LevelSolver {
     // Initialised in LevelRender
     ArrayList<Pair<Integer, Integer>> receiverSpots;
+    ArrayList<Pair<Integer, Integer>> emptySpots;
 
     // Initialised in the solveLevel method
     HashMap<LightSource, Pair<Integer, Integer>> sourceSpots;
@@ -30,10 +30,11 @@ public class LevelSolver {
     public long totalPermutations;
 
 
-    public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots) {
+    public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots, ArrayList<Pair<Integer, Integer>> emptySpots) {
         this.receiverSpots = receiverSpots;
         lightProcessingQueue = new LinkedList<>();
         sourceSpots = new HashMap<>();
+        this.emptySpots = emptySpots;
     }
 
     public void createStats(long emptySpots, long dynamicObjects) {
@@ -56,7 +57,7 @@ public class LevelSolver {
         if (!dgoQueue.isEmpty()) {
             // System.out.println(!dgoQueue.isEmpty());
             DynamicGridObject dgo = dgoQueue.remove();
-            ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, emptySpots);
+            ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
             // System.out.println(dgoQueue + " " + dgoQueue.size());
             // System.out.println(dgo + " " + filteredEmptySpots.size());
             // Collections.shuffle(filteredEmptySpots);
@@ -68,10 +69,11 @@ public class LevelSolver {
                     GridCell[][] copyGrid = copyGridCellArray(grid);
                     copyGrid[spotX][spotY].cellDynamicItem = dgo;
                     LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-                    boolean isSolutionFound = solveLevel(copyGrid, emptySpots, copyQueue);
+                    boolean isSolutionFound = solveLevel(copyGrid, this.emptySpots, copyQueue);
                     if (isSolutionFound) {
                         return true;
                     }
+                    // grid[spotX][spotY].cellDynamicItem = null;
                 }
             }
         } else {

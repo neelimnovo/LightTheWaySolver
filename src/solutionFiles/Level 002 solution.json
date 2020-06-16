@@ -1,1 +1,343 @@
-{"solutionGrid":[[{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WHITE_RECEIVER","receiver":{"isPowered":true,"colour":"WHITE"},"light":{"colour":"WHITE","orientation":"LEFT","xPos":0,"yPos":2}},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","cellDynamicItem":{"orientation":"UP"},"light":{"colour":"WHITE","orientation":"UP","xPos":1,"yPos":2}},{"cellStaticItem":"EMPTY","cellDynamicItem":{"orientation":"UP"}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":2,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":3,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":4,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":5,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":6,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":7,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY","light":{"colour":"WHITE","orientation":"RIGHT","xPos":8,"yPos":2}},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"EMPTY"},{"cellStaticItem":"WALL"}],[{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WHITE_RECEIVER","receiver":{"isPowered":true,"colour":"WHITE"},"light":{"colour":"WHITE","orientation":"RIGHT","xPos":9,"yPos":2}},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"},{"cellStaticItem":"WALL"}]],"totalTime":1,"totalPermutations":2862,"attemptPermutations":23,"permutationRatio":0.8036}
+{
+  "levelName": "Level 002",
+  "solutionGrid": [
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "LEFT",
+          "xPos": 0,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "UP"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "UP",
+          "xPos": 1,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "cellDynamicItem": {
+          "orientation": "UP"
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 2,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 3,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 4,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 5,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 6,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 7,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY",
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 8,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "EMPTY"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ],
+    [
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WHITE_RECEIVER",
+        "receiver": {
+          "isPowered": true,
+          "colour": "WHITE"
+        },
+        "light": {
+          "colour": "WHITE",
+          "orientation": "RIGHT",
+          "xPos": 9,
+          "yPos": 2
+        }
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      },
+      {
+        "cellStaticItem": "WALL"
+      }
+    ]
+  ],
+  "totalTime": 1,
+  "totalPermutations": 2862,
+  "attemptPermutations": 1,
+  "permutationRatio": 0.03494
+}
