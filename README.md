@@ -14,5 +14,7 @@ Can solve slightly complex levels:
 Can solve a bit more complex levels:
 ![](/resources/github/moreComplex.png)
 
-The solution and solving statistics to each level can also be saved and displayed (work in progress):
+The app has stored solution for levels that can be solved in a reasonable amount of time. The level loader menu will indicate the solved levels with green buttons.
 
+The solution and solving statistics to each level can also be saved and displayed:
+![](/resources/github/Stats.PNG)
