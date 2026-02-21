@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.12'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.openjfx:javafx-controls:17'
+    implementation 'org.openjfx:javafx-fxml:17' 
+    implementation 'org.openjfx:javafx-graphics:17'
+    implementation 'org.openjfx:javafx-base:17'     
+    implementation 'org.openjfx:javafx-swt:17'      
+    implementation 'com.google.code.gson:gson:2.10.1'
+
+}
+
+javafx {
+    version = "17" // Specify the JavaFX version you want to use
+    modules = [ 'javafx.controls', 'javafx.fxml' ] // Add required JavaFX modules
+}
+
+application {
+    // The main class for the JavaFX application
+    mainClassName = 'ui.MainMenu'
+}
+
+// Generate debugging information for Visual Studio Code
+tasks.withType(JavaCompile) {
+    options.debug = true
+    options.compilerArgs << '-g'
+}

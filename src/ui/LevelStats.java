@@ -8,6 +8,8 @@ import javafx.scene.layout.Priority;
 import model.Stats;
 import java.io.File;
 import java.util.ArrayList;
+import javafx.stage.FileChooser;
+
 
 import static ui.MainMenu.*;
 
@@ -60,9 +62,40 @@ public class LevelStats {
 
         Button backLevelStats = makeBackButton(mainMenuScene);
         changeButtonColour(backLevelStats, BUTTON_BLUE);
-        GridPane.setConstraints(backLevelStats, 0, 1);
+        GridPane.setConstraints(backLevelStats, 0, 2);
 
-        gridPane.getChildren().addAll(tableView, backLevelStats);
+        // Add Download CSV button
+        Button downloadCSVButton = new Button("Download CSV");
+        changeButtonColour(downloadCSVButton, BUTTON_BLUE);
+        materialiseButton(downloadCSVButton);
+        GridPane.setConstraints(downloadCSVButton, 1, 2);
+        GridPane.setMargin(downloadCSVButton, new javafx.geometry.Insets(10, 20, 10, 10));
+        downloadCSVButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Statistics as CSV");
+            fileChooser.setInitialFileName("level_stats.csv");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+            File file = fileChooser.showSaveDialog(mainWindow);
+            if (file != null) {
+                try (java.io.PrintWriter writer = new java.io.PrintWriter(file, "UTF-8")) {
+                    // Write header
+                    writer.println("Level Number,Solving Time (seconds),Attempted Permutations,Total Possible Permutations,Percentage of Attempted Permutations");
+                    for (Stats stats : levelStatsArray) {
+                        writer.printf("%s,%d,%d,%d,%.2f\n",
+                                stats.getLevelName(),
+                                stats.getTotalTime(),
+                                stats.getAttemptPermutations(),
+                                stats.getTotalPermutations(),
+                                stats.getPermutationRatio());
+                    }
+                } catch (Exception ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save CSV: " + ex.getMessage(), ButtonType.OK);
+                    alert.showAndWait();
+                }
+            }
+        });
+
+        gridPane.getChildren().addAll(tableView, backLevelStats, downloadCSVButton);
         gridPane.setStyle("-fx-background-color:" + SCENE_BLUE);
         levelStatsScene = new Scene(gridPane, SCENE_WIDTH, SCENE_HEIGHT);
         return levelStatsScene;

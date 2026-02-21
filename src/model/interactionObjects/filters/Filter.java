@@ -16,9 +16,11 @@ import static model.interactionObjects.StaticGridObject.WALL;
 public abstract class Filter extends DynamicGridObject {
 
     public Colour colour;
+    public int occlusionCount;
 
     public Filter(Colour colour) {
         this.colour = colour;
+        this.occlusionCount = 0;
     }
 
     @Override
@@ -30,11 +32,13 @@ public abstract class Filter extends DynamicGridObject {
             int spotY = spot.getValue();
             Receiver receiver;
             boolean isValidSpot = true;
-            int occlusionCount = 0;
+            // int occlusionCount = 0;
+            // TODO Occlusion can occur with other different coloured filters too
+
             // UP
             if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                 if (isOccludedSpot(grid, spotX, spotY - 1)) {
-                    occlusionCount++;
+                    this.occlusionCount++;
                 }
                 receiver = grid[spotX][spotY - 1].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX, spotY - 1)) {
@@ -44,7 +48,7 @@ public abstract class Filter extends DynamicGridObject {
             // DOWN
             if (isValidSpot && GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
                 if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    occlusionCount++;
+                    this.occlusionCount++;
                 }
                 receiver = grid[spotX][spotY + 1].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX, spotY + 1)) {
@@ -54,7 +58,7 @@ public abstract class Filter extends DynamicGridObject {
             // LEFT
             if (isValidSpot && GridLayout.isWithinBounds(grid, spotX - 1, spotY) && (occlusionCount < 2)) {
                 if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    occlusionCount++;
+                    this.occlusionCount++;
                 }
                 receiver = grid[spotX - 1][spotY].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX - 1, spotY)) {
@@ -64,7 +68,7 @@ public abstract class Filter extends DynamicGridObject {
             // RIGHT
             if (isValidSpot && GridLayout.isWithinBounds(grid, spotX + 1, spotY) && (occlusionCount < 2)) {
                 if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    occlusionCount++;
+                    this.occlusionCount++;
                 }
                 receiver = grid[spotX + 1][spotY].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX + 1, spotY)) {

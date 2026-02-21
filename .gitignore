@@ -1,2 +1,8 @@
 # Project exclude paths
 /out/
+build/
+bin/
+lib/
+.gradle/
+.vscode/
+.github/

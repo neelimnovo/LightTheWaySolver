@@ -46,9 +46,9 @@ public class LightSource extends DynamicGridObject {
                 case UP:
                     if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                         if (isValidExit(grid, spotX, spotY - 1)
-                        && isNotReceiver(grid, spotX, spotY, DOWN)
-                        && isNotReceiver(grid, spotX, spotY, LEFT)
-                        && isNotReceiver(grid, spotX, spotY, RIGHT)) {
+                        && isValidDGO(grid, spotX, spotY, DOWN)
+                        && isValidDGO(grid, spotX, spotY, LEFT)
+                        && isValidDGO(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -56,9 +56,9 @@ public class LightSource extends DynamicGridObject {
                 case DOWN:
                     if (GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
                         if (isValidExit(grid, spotX, spotY + 1)
-                                && isNotReceiver(grid, spotX, spotY, UP)
-                                && isNotReceiver(grid, spotX, spotY, LEFT)
-                                && isNotReceiver(grid, spotX, spotY, RIGHT)) {
+                                && isValidDGO(grid, spotX, spotY, UP)
+                                && isValidDGO(grid, spotX, spotY, LEFT)
+                                && isValidDGO(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -66,9 +66,9 @@ public class LightSource extends DynamicGridObject {
                 case LEFT:
                     if (GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
                         if (isValidExit(grid, spotX - 1, spotY)
-                                && isNotReceiver(grid, spotX, spotY, UP)
-                                && isNotReceiver(grid, spotX, spotY, DOWN)
-                                && isNotReceiver(grid, spotX, spotY, RIGHT)) {
+                                && isValidDGO(grid, spotX, spotY, UP)
+                                && isValidDGO(grid, spotX, spotY, DOWN)
+                                && isValidDGO(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -76,9 +76,9 @@ public class LightSource extends DynamicGridObject {
                 case RIGHT:
                     if (GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
                         if (isValidExit(grid, spotX + 1, spotY)
-                                && isNotReceiver(grid, spotX, spotY, UP)
-                                && isNotReceiver(grid, spotX, spotY, DOWN)
-                                && isNotReceiver(grid, spotX, spotY, LEFT)) {
+                                && isValidDGO(grid, spotX, spotY, UP)
+                                && isValidDGO(grid, spotX, spotY, DOWN)
+                                && isValidDGO(grid, spotX, spotY, LEFT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -88,13 +88,16 @@ public class LightSource extends DynamicGridObject {
         return resultSpots;
     }
 
-    private boolean isNotReceiver(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
+    private boolean isValidDGO(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
         switch (direction) {
+            // TODO should check for non-logical items on the sides
             case UP:
                 if (!GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                     return true;
                 } else {
-                    return grid[spotX][spotY - 1].receiver == null;
+                    return grid[spotX][spotY - 1].receiver == null
+                    // TODO should not be exiting light source, exiting shifter, prism or occlude a filter
+                    && grid[spotX][spotY - 1].cellDynamicItem == null;
                 }
             case DOWN:
                 if (!GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {

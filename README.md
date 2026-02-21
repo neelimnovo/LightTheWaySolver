@@ -21,3 +21,20 @@ The solution and solving statistics to each level can also be saved and displaye
 
 
 The wiki explains the approach taken for solving the levels in the game. No copyright infrigement is intended, the app was made simply for a learning experience.
+
+# Instructions to run
+
+To build project, run
+```
+gradle build
+```
+
+To start the JavaFX app, run
+```
+gradle run
+```
+
+TODO
+* Dump statistics into a file for diffing
+* Improve UI
+* TODO installation guide for pre gradle dependencies (java, gradle)
