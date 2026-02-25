@@ -1,0 +1,376 @@
+{
+    "title": "Level 101",
+    "gridLayout": {
+        "gridCellArray": [
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "RED_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WHITE_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "RED_RECEIVER"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WHITE_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WHITE_RECEIVER"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "BLUE_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "BLUE_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ]
+        ],
+        "lights": [
+            {
+                "orientation": "DOWN"
+            },
+            {
+                "orientation": "RIGHT"
+            }
+        ],
+        "blueFilters": [
+            {
+                "colour": "BLUE",
+                "occlusionCount": 0
+            }
+        ],
+        "redFilters": [
+            {
+                "colour": "RED",
+                "occlusionCount": 0
+            }
+        ],
+        "yellowFilters": [],
+        "backMirrors": [
+            {},
+            {},
+            {},
+            {}
+        ],
+        "frontMirrors": [
+            {}
+        ],
+        "prisms": [],
+        "tJunctions": [
+            {
+                "orientation": "UP"
+            },
+            {
+                "orientation": "UP"
+            },
+            {
+                "orientation": "LEFT"
+            },
+            {
+                "orientation": "RIGHT"
+            },
+            {
+                "orientation": "RIGHT"
+            }
+        ],
+        "colourShifters": []
+    }
+}

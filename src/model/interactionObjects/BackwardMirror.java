@@ -50,21 +50,21 @@ public class BackwardMirror extends DynamicGridObject {
                 } else {
                     switch (orientation) {
                         case UP:
-                            return !(dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == DOWN)
-                                    && !(dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != DOWN)
-                                    && !(dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation == DOWN);
+                            return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != DOWN)
+                                    && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == DOWN)
+                                    && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != DOWN);
                         case DOWN:
-                            return !(dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == UP)
-                                    && !(dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != UP)
-                                    && !(dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation == UP);
+                            return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != UP)
+                                    && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == UP)
+                                    && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != UP);
                         case LEFT:
-                            return !(dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == RIGHT)
-                                    && !(dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != RIGHT)
-                                    && !(dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation == RIGHT);
+                            return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != RIGHT)
+                                    && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == RIGHT)
+                                    && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != RIGHT);
                         case RIGHT:
-                            return !(dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == LEFT)
-                                    && !(dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != LEFT)
-                                    && !(dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation == LEFT);
+                            return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != LEFT)
+                                    && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == LEFT)
+                                    && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != LEFT);
                         default:
                             throw new IllegalStateException("Unexpected value: " + orientation);
                     }

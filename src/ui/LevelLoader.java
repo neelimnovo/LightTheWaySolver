@@ -39,10 +39,24 @@ public class LevelLoader {
             String levelName = levels[i].substring(0, levels[i].indexOf('.'));
             Button levelButton = new Button(levelName);
             // Large, rounded, bold font, subtle shadow
-            levelButton.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, #00000022, 4, 0.2, 0, 1);");
+            String baseStyle = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-radius: 12;";
+            String normalEffect = "-fx-effect: dropshadow(gaussian, #00000022, 4, 0.2, 0, 1);";
+            String hoverEffect = "-fx-effect: dropshadow(gaussian, #00000055, 12, 0.3, 0, 4);";
+            levelButton.setStyle(baseStyle + normalEffect);
             levelButton.setMinWidth(140);
             levelButton.setMinHeight(48);
             levelButton.setPadding(new Insets(8, 16, 8, 16));
+            levelButton.setOnMouseEntered(e -> {
+                String current = levelButton.getStyle();
+                // Replace only the -fx-effect property
+                String updated = current.replaceAll("-fx-effect:[^;]*;?", "") + hoverEffect;
+                levelButton.setStyle(updated);
+            });
+            levelButton.setOnMouseExited(e -> {
+                String current = levelButton.getStyle();
+                String updated = current.replaceAll("-fx-effect:[^;]*;?", "") + normalEffect;
+                levelButton.setStyle(updated);
+            });
             levelButton.setOnAction(event -> {
                 Level level = Level.load(levelName);
                 mainWindow.setScene(createRenderLevelScene(levelName, level));
@@ -67,7 +81,6 @@ public class LevelLoader {
         gridPane.setVgap(20);
         gridPane.setHgap(20);
 
-        // Fix: ensure scrollPane background is also SCENE_BLUE
         scrollPane.setStyle("-fx-background: " + SCENE_BLUE + ";");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);

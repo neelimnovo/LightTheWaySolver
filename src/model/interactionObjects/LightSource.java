@@ -46,9 +46,9 @@ public class LightSource extends DynamicGridObject {
                 case UP:
                     if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                         if (isValidExit(grid, spotX, spotY - 1)
-                        && isValidDGO(grid, spotX, spotY, DOWN)
-                        && isValidDGO(grid, spotX, spotY, LEFT)
-                        && isValidDGO(grid, spotX, spotY, RIGHT)) {
+                        && isValidNeighbour(grid, spotX, spotY, DOWN)
+                        && isValidNeighbour(grid, spotX, spotY, LEFT)
+                        && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -56,9 +56,9 @@ public class LightSource extends DynamicGridObject {
                 case DOWN:
                     if (GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
                         if (isValidExit(grid, spotX, spotY + 1)
-                                && isValidDGO(grid, spotX, spotY, UP)
-                                && isValidDGO(grid, spotX, spotY, LEFT)
-                                && isValidDGO(grid, spotX, spotY, RIGHT)) {
+                                && isValidNeighbour(grid, spotX, spotY, UP)
+                                && isValidNeighbour(grid, spotX, spotY, LEFT)
+                                && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -66,9 +66,9 @@ public class LightSource extends DynamicGridObject {
                 case LEFT:
                     if (GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
                         if (isValidExit(grid, spotX - 1, spotY)
-                                && isValidDGO(grid, spotX, spotY, UP)
-                                && isValidDGO(grid, spotX, spotY, DOWN)
-                                && isValidDGO(grid, spotX, spotY, RIGHT)) {
+                                && isValidNeighbour(grid, spotX, spotY, UP)
+                                && isValidNeighbour(grid, spotX, spotY, DOWN)
+                                && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -76,9 +76,9 @@ public class LightSource extends DynamicGridObject {
                 case RIGHT:
                     if (GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
                         if (isValidExit(grid, spotX + 1, spotY)
-                                && isValidDGO(grid, spotX, spotY, UP)
-                                && isValidDGO(grid, spotX, spotY, DOWN)
-                                && isValidDGO(grid, spotX, spotY, LEFT)) {
+                                && isValidNeighbour(grid, spotX, spotY, UP)
+                                && isValidNeighbour(grid, spotX, spotY, DOWN)
+                                && isValidNeighbour(grid, spotX, spotY, LEFT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
                         }
                     }
@@ -88,9 +88,15 @@ public class LightSource extends DynamicGridObject {
         return resultSpots;
     }
 
-    private boolean isValidDGO(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
+    /*
+    Given the position of a cell that will be adjacent to a light source, 
+        and the light source's orientation
+    Check that the given cell does not contain an illogical dynamic grid object
+    E.g for a light source, it cannot have a neighbouring shifter that points into it
+    or a prism
+    */
+    private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
         switch (direction) {
-            // TODO should check for non-logical items on the sides
             case UP:
                 if (!GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                     return true;

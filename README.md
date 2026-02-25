@@ -35,6 +35,11 @@ gradle run
 ```
 
 TODO
-* Dump statistics into a file for diffing
-* Improve UI
 * TODO installation guide for pre gradle dependencies (java, gradle)
+* revisit filter logic for
+    * shifters
+    * lights
+    * tJunctions
+    * front Mirrors
+    * back Mirrors
+* Fix total permutations overflow with level 24

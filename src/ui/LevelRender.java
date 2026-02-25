@@ -124,6 +124,7 @@ public class LevelRender {
                     solver.attemptPermutations);
             renderSolvedGrid(renderedGrid, solver.solutionGrid);
         } else {
+            statistics = null;
             System.out.println("No solution found");
         }
     }

@@ -54,10 +54,9 @@ public class Prism extends DynamicGridObject {
             }
         }
         return resultSpots;
-        //return emptySpots;
     }
 
-    private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation orientation) {
+    private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation neighbourSpot) {
         if (grid[spotX][spotY].cellStaticItem == WALL) {
             return false;
         } else if (grid[spotX][spotY].cellStaticItem == EMPTY) {
@@ -65,57 +64,62 @@ public class Prism extends DynamicGridObject {
             if (dgo == null) {
                 return true;
             } else {
+                // Neighbour cannot be a prism. This is the first DGO to be placed, so doesn't have to search for others
                 return dgo.getClass() != Prism.class;
             }
         } else {
-            switch (orientation) {
-                case UP:
-                    switch (this.orientation) {
+            switch (this.orientation) {
+                case UP: // For a prism facing up, top is red, left is blue, right is yellow, bottom is white
+                    switch (neighbourSpot) {
                         case UP:
                             return grid[spotX][spotY].cellStaticItem != RED_RECEIVER;
                         case DOWN:
+                            // Cannot block white side entrance
                             return false;
-                        case LEFT:
-                            return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
-                        case RIGHT:
-                            return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
-                    }
-                case DOWN:
-                    switch (this.orientation) {
-                        case UP:
-                            return false;
-                        case DOWN:
-                            return grid[spotX][spotY].cellStaticItem != RED_RECEIVER;
                         case LEFT:
                             return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
                         case RIGHT:
                             return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
                     }
-                case LEFT:
-                    switch (this.orientation) {
+                case DOWN: // For a prism facing down, bottom is red, left is yellow, right is blue, top is white
+                    switch (neighbourSpot) {
                         case UP:
-                            return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
+                            // Cannot block white side entrance
+                            return false;
                         case DOWN:
+                            return grid[spotX][spotY].cellStaticItem != RED_RECEIVER;
+                        case LEFT:
                             return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
+                        case RIGHT:
+                            return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
+                    }
+                case LEFT: // For a prism facing left, left is red, top is yellow, bottom is blue, right is white
+                    switch (neighbourSpot) {
+                        case UP:
+                            return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
+                        case DOWN:
+                            return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
                         case LEFT:
                             return grid[spotX][spotY].cellStaticItem != RED_RECEIVER;
                         case RIGHT:
+                            // Cannot block white side entrance
                             return false;
                     }
-                case RIGHT:
-                    switch (this.orientation) {
+                case RIGHT: // For a prism facing right, right is red, top is blue, bottom is yellow, left is white
+                    switch (neighbourSpot) {
                         case UP:
-                            return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
-                        case DOWN:
                             return grid[spotX][spotY].cellStaticItem != BLUE_RECEIVER;
+                        case DOWN:
+                            return grid[spotX][spotY].cellStaticItem != YELLOW_RECEIVER;
                         case LEFT:
+                            // Cannot block white side entrance
                             return false;
                         case RIGHT:
                             return grid[spotX][spotY].cellStaticItem != RED_RECEIVER;
                     }
             }
+            return true;
         }
-        return true;
     }
 
 

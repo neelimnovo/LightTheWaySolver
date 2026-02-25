@@ -32,13 +32,16 @@ public abstract class Filter extends DynamicGridObject {
             int spotY = spot.getValue();
             Receiver receiver;
             boolean isValidSpot = true;
-            // int occlusionCount = 0;
+            boolean upOccluded = false;
+            boolean downOccluded = false;
+            boolean leftOccluded = false;
+            boolean rightOccluded = false;
             // TODO Occlusion can occur with other different coloured filters too
 
             // UP
             if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                 if (isOccludedSpot(grid, spotX, spotY - 1)) {
-                    this.occlusionCount++;
+                    upOccluded = true;
                 }
                 receiver = grid[spotX][spotY - 1].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX, spotY - 1)) {
@@ -47,8 +50,8 @@ public abstract class Filter extends DynamicGridObject {
             }
             // DOWN
             if (isValidSpot && GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
-                if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    this.occlusionCount++;
+                if (isOccludedSpot(grid, spotX, spotY + 1)) {
+                    downOccluded = true;
                 }
                 receiver = grid[spotX][spotY + 1].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX, spotY + 1)) {
@@ -56,9 +59,9 @@ public abstract class Filter extends DynamicGridObject {
                 }
             }
             // LEFT
-            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX - 1, spotY) && (occlusionCount < 2)) {
-                if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    this.occlusionCount++;
+            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
+                if (isOccludedSpot(grid, spotX - 1, spotY) && (upOccluded || downOccluded)) {
+                    isValidSpot = false;
                 }
                 receiver = grid[spotX - 1][spotY].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX - 1, spotY)) {
@@ -66,9 +69,9 @@ public abstract class Filter extends DynamicGridObject {
                 }
             }
             // RIGHT
-            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX + 1, spotY) && (occlusionCount < 2)) {
-                if (grid[spotX][spotY].cellStaticItem == WALL) {
-                    this.occlusionCount++;
+            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
+                if (isOccludedSpot(grid, spotX + 1, spotY) && (upOccluded || downOccluded)) {
+                    isValidSpot = false;
                 }
                 receiver = grid[spotX + 1][spotY].receiver;
                 if (!isValidReceiver(receiver) || isNextToPrism(grid, spotX + 1, spotY)) {
@@ -76,7 +79,7 @@ public abstract class Filter extends DynamicGridObject {
                 }
             }
             // Add the spot if all neighbouring spots are valid
-            if (isValidSpot && (occlusionCount < 2)) {
+            if (isValidSpot) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
         }
@@ -89,10 +92,6 @@ public abstract class Filter extends DynamicGridObject {
             return true;
         } else if (dgo != null) {
             if (dgo.getClass() == Prism.class){
-                return true;
-            } else if ((dgo.getClass() == RedFilter.class && this.colour != RED)
-            || (dgo.getClass() == BlueFilter.class && this.colour != BLUE)
-            || (dgo.getClass() == YellowFilter.class && this.colour != YELLOW)) {
                 return true;
             } else {
                 return false;
