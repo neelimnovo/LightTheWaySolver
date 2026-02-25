@@ -84,6 +84,49 @@ public class Stats {
     }
 
 
+    /**
+     * Loads a specific stat value from a saved Stats file.
+     * Supported statName values: "permutationRatio", "totalTime", "totalPermutations", "attemptPermutations", "levelName"
+     * Returns -1 for numeric stats if loading fails, or null for String stats.
+     */
+    public static Object loadPreexistingStat(String fileName, String statName) {
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        try {
+            FileReader fileReader = new FileReader("src\\solutionFiles\\" + fileName + " solution.json");
+            JsonReader reader = new JsonReader(fileReader);
+            Stats loadedStats = gson.fromJson(reader, Stats.class);
+            switch (statName) {
+                case "permutationRatio":
+                    return loadedStats.permutationRatio;
+                case "totalTime":
+                    return loadedStats.totalTime;
+                case "totalPermutations":
+                    return loadedStats.totalPermutations;
+                case "attemptPermutations":
+                    return loadedStats.attemptPermutations;
+                case "levelName":
+                    return loadedStats.levelName;
+                default:
+                    System.out.println("Unsupported statName: " + statName);
+                    return null;
+            }
+        } catch (Exception e) {
+            System.out.println("No pre-saved stat for " + statName + ", " + fileName);
+            if (statName.equals("levelName")) return null;
+            return -1;
+        }
+    }
+
+    public static double loadPreexistingPermutationRatio(String fileName) {
+        Object result = loadPreexistingStat(fileName, "permutationRatio");
+        return result instanceof Double ? (Double) result : -1;
+    }
+
+    public static double loadPreexistingTotalTime(String fileName) {
+        Object result = loadPreexistingStat(fileName, "totalTime");
+        return result instanceof Long ? ((Long) result).doubleValue() : -1;
+    }
+
     public void save(String fileName) {
         Gson gson = new Gson();
         String saveFileJSON = gson.toJson(this);

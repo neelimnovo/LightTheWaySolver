@@ -55,7 +55,7 @@ public class LevelRender {
             solveThenRenderGrid(renderedGrid, level.gridLayout, emptyPositions,
                     receiverPositions, dynamicGridObjectsQueue);
             if (statistics != null) {
-                renderStatsLabels(gridPane);
+                renderStatsLabels(gridPane, level.title);
             }
         });
 
@@ -80,14 +80,33 @@ public class LevelRender {
         return levelRenderScene;
     }
 
-    private static void renderStatsLabels(GridPane gridPane) {
+    private static void renderStatsLabels(GridPane gridPane, String levelName) {
         Label timeLabel = new Label("Time taken to solve: " + (statistics.totalTime / 1000) + "s");
         Label percentageLabel = new Label("Percentage of all permutations attempted: "
-                + statistics.permutationRatio + "%");
+            + statistics.permutationRatio + "%");
 
         GridPane.setConstraints(timeLabel, 1 , 2);
         GridPane.setConstraints(percentageLabel, 1 , 3);
         gridPane.getChildren().addAll(timeLabel, percentageLabel);
+
+        // Check for new record in permutation ratio and total time separately
+        double previousRatio = Stats.loadPreexistingPermutationRatio(levelName);
+        double previousTime = Stats.loadPreexistingTotalTime(levelName);
+
+        if (statistics.totalTime < previousTime) {
+            Label newRecordTimeLabel = new Label("       ** NEW RECORD (Time) **");
+            newRecordTimeLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+            GridPane.setConstraints(newRecordTimeLabel, 2, 2);
+            gridPane.getChildren().add(newRecordTimeLabel);
+        }
+
+        if (statistics.permutationRatio < previousRatio) {
+            Label newRecordRatioLabel = new Label("      ** NEW RECORD (Permutations) **");
+            newRecordRatioLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+            GridPane.setConstraints(newRecordRatioLabel, 2, 3);
+            gridPane.getChildren().add(newRecordRatioLabel);
+        }
+
     }
 
     private static void solveThenRenderGrid(GridPane renderedGrid,
@@ -98,7 +117,7 @@ public class LevelRender {
         LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
         long startTime = System.currentTimeMillis();
-        solver.solveLevel(gridLayout.gridCellArray, emptyPositions, dgoQueue);
+        solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue);
         if (solver.solutionGrid != null) {
             totalTime = (System.currentTimeMillis() - startTime);
             statistics = new Stats(solver.solutionGrid, totalTime, solver.totalPermutations,

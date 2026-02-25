@@ -52,7 +52,7 @@ public class LevelSolver {
     }
 
     // EFFECTS: "Efficiently" iterates through all possible placement permutations to find a solution grid
-    public boolean solveLevel(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots,
+    public boolean solveLevelOriginal(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots,
                               LinkedList<DynamicGridObject> dgoQueue) {
         if (!dgoQueue.isEmpty()) {
             // System.out.println(!dgoQueue.isEmpty());
@@ -69,7 +69,7 @@ public class LevelSolver {
                     GridCell[][] copyGrid = copyGridCellArray(grid);
                     copyGrid[spotX][spotY].cellDynamicItem = dgo;
                     LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-                    boolean isSolutionFound = solveLevel(copyGrid, this.emptySpots, copyQueue);
+                    boolean isSolutionFound = solveLevelOriginal(copyGrid, this.emptySpots, copyQueue);
                     if (isSolutionFound) {
                         return true;
                     }
@@ -103,7 +103,7 @@ public class LevelSolver {
         //             trackLightSources(dgo, spotX, spotY);
         //             loopGrid[spotX][spotY].cellDynamicItem = dgo;
         //             LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-        //             boolean isSolutionFound = solveLevel(copyGrid, this.emptySpots, copyQueue);
+        //             boolean isSolutionFound = solveLevel2(copyGrid, this.emptySpots, copyQueue);
         //             if (isSolutionFound) {
         //                 return true;
         //             }
@@ -118,7 +118,7 @@ public class LevelSolver {
         //             trackLightSources(dgo, spotX, spotY);
         //             loopGrid[spotX][spotY].cellDynamicItem = dgo;
         //             LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-        //             boolean isSolutionFound = solveLevel(copyGrid, this.emptySpots, copyQueue);
+        //             boolean isSolutionFound = solveLevel2(copyGrid, this.emptySpots, copyQueue);
         //             if (isSolutionFound) {
         //                 return true;
         //             }

@@ -64,38 +64,34 @@ public class LevelStats {
         changeButtonColour(backLevelStats, BUTTON_BLUE);
         GridPane.setConstraints(backLevelStats, 0, 2);
 
-        // Add Download CSV button
-        Button downloadCSVButton = new Button("Download CSV");
-        changeButtonColour(downloadCSVButton, BUTTON_BLUE);
-        materialiseButton(downloadCSVButton);
-        GridPane.setConstraints(downloadCSVButton, 1, 2);
-        GridPane.setMargin(downloadCSVButton, new javafx.geometry.Insets(10, 20, 10, 10));
-        downloadCSVButton.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Statistics as CSV");
-            fileChooser.setInitialFileName("level_stats.csv");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
-            File file = fileChooser.showSaveDialog(mainWindow);
-            if (file != null) {
-                try (java.io.PrintWriter writer = new java.io.PrintWriter(file, "UTF-8")) {
-                    // Write header
-                    writer.println("Level Number,Solving Time (seconds),Attempted Permutations,Total Possible Permutations,Percentage of Attempted Permutations");
-                    for (Stats stats : levelStatsArray) {
-                        writer.printf("%s,%d,%d,%d,%.2f\n",
-                                stats.getLevelName(),
-                                stats.getTotalTime(),
-                                stats.getAttemptPermutations(),
-                                stats.getTotalPermutations(),
-                                stats.getPermutationRatio());
-                    }
-                } catch (Exception ex) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to save CSV: " + ex.getMessage(), ButtonType.OK);
-                    alert.showAndWait();
+        Button exportStatsButton = new Button("Export Stats");
+        String savePath = "src/saveFiles/level_stats.csv";
+        changeButtonColour(exportStatsButton, BUTTON_BLUE);
+        materialiseButton(exportStatsButton);
+        GridPane.setConstraints(exportStatsButton, 1, 2);
+        GridPane.setMargin(exportStatsButton, new javafx.geometry.Insets(10, 20, 10, 10));
+        exportStatsButton.setOnAction(e -> {
+            File file = new File("src/statFiles/level_stats.csv");
+            try (java.io.PrintWriter writer = new java.io.PrintWriter(file, "UTF-8")) {
+                // Write header
+                writer.println("Level Number,Solving Time (seconds),Attempted Permutations,Total Possible Permutations,Percentage of Attempted Permutations");
+                for (Stats stats : levelStatsArray) {
+                    writer.printf("%s,%d,%d,%d,%.2f\n",
+                            stats.getLevelName(),
+                            stats.getTotalTime(),
+                            stats.getAttemptPermutations(),
+                            stats.getTotalPermutations(),
+                            stats.getPermutationRatio());
                 }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Stats exported to src/saveFiles/level_stats.csv", ButtonType.OK);
+                alert.showAndWait();
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to export stats: " + ex.getMessage(), ButtonType.OK);
+                alert.showAndWait();
             }
         });
 
-        gridPane.getChildren().addAll(tableView, backLevelStats, downloadCSVButton);
+        gridPane.getChildren().addAll(tableView, backLevelStats, exportStatsButton);
         gridPane.setStyle("-fx-background-color:" + SCENE_BLUE);
         levelStatsScene = new Scene(gridPane, SCENE_WIDTH, SCENE_HEIGHT);
         return levelStatsScene;
