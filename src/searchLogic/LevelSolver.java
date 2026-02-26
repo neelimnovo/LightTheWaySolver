@@ -168,6 +168,7 @@ public class LevelSolver {
         if (allReceiversArePowered(receiverSpots, grid)) {
             return true;
         } else {
+            // Reset the powered state of all receivers for the next permutation
             for (Pair<Integer, Integer> spot : receiverSpots) {
                 int spotX = spot.getKey();
                 int spotY = spot.getValue();

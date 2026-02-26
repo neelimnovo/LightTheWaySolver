@@ -12,7 +12,7 @@ import static model.interactionObjects.BackwardMirror.isUnblockedMirrorSpot;
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.FaceOrientation.DOWN;
 
-public class ForwardMirror extends DynamicGridObject{
+public class ForwardMirror extends DynamicGridObject {
 
     @Override
     public String getCorrectImageString() {
@@ -22,7 +22,7 @@ public class ForwardMirror extends DynamicGridObject{
     @Override
     // EFFECTS: Filters a spot if both reflection pathways are blocked
     public ArrayList<Pair<Integer, Integer>> filter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
-        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
@@ -41,36 +41,32 @@ public class ForwardMirror extends DynamicGridObject{
 
     @Override
     public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
-        Light interactedLight = null;
+        int x = light.xPos, y = light.yPos;
+        int nx = x, ny = y;
+        FaceOrientation newOrientation = null;
         switch (light.orientation) {
             case UP:
-                if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                    interactedLight = new Light(light.colour, RIGHT, light.xPos + 1, light.yPos);
-                    grid[light.xPos + 1][light.yPos].light = interactedLight;
-                }
+                nx = x + 1;
+                newOrientation = RIGHT;
                 break;
             case DOWN:
-                if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                    interactedLight = new Light(light.colour, LEFT, light.xPos - 1, light.yPos);
-                    grid[light.xPos - 1][light.yPos].light = interactedLight;
-                }
+                nx = x - 1;
+                newOrientation = LEFT;
                 break;
             case LEFT:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                    interactedLight = new Light(light.colour, DOWN, light.xPos, light.yPos + 1);
-                    grid[light.xPos][light.yPos + 1].light = interactedLight;
-                }
+                ny = y + 1;
+                newOrientation = DOWN;
                 break;
             case RIGHT:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                    interactedLight = new Light(light.colour, UP, light.xPos, light.yPos - 1);
-                    grid[light.xPos][light.yPos - 1].light = interactedLight;
-                }
+                ny = y - 1;
+                newOrientation = UP;
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + light.orientation);
         }
-        if (interactedLight != null) {
+        if (GridLayout.isWithinBounds(grid, nx, ny)) {
+            Light interactedLight = new Light(light.colour, newOrientation, nx, ny);
+            grid[nx][ny].light = interactedLight;
             lightProcessingQueue.add(interactedLight);
         }
     }

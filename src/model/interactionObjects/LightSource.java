@@ -13,7 +13,7 @@ import static model.interactionObjects.FaceOrientation.getOppositeOrientation;
 import static model.interactionObjects.StaticGridObject.*;
 
 public class LightSource extends DynamicGridObject {
-    public FaceOrientation orientation;
+    public final FaceOrientation orientation;
 
     public LightSource(FaceOrientation orientation) {
         this.orientation = orientation;
@@ -38,7 +38,7 @@ public class LightSource extends DynamicGridObject {
 
     @Override
     public ArrayList<Pair<Integer, Integer>> filter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
-        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
@@ -94,6 +94,7 @@ public class LightSource extends DynamicGridObject {
     Check that the given cell does not contain an illogical dynamic grid object
     E.g for a light source, it cannot have a neighbouring shifter that points into it
     or a prism
+    It cannot be a receiver that is being blocked
     */
     private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
         switch (direction) {
@@ -101,9 +102,8 @@ public class LightSource extends DynamicGridObject {
                 if (!GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
                     return true;
                 } else {
-                    return grid[spotX][spotY - 1].receiver == null
                     // TODO should not be exiting light source, exiting shifter, prism or occlude a filter
-                    && grid[spotX][spotY - 1].cellDynamicItem == null;
+                    return grid[spotX][spotY - 1].receiver == null;
                 }
             case DOWN:
                 if (!GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
@@ -130,7 +130,7 @@ public class LightSource extends DynamicGridObject {
 
     @Override
     public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
-        // System.out.println("Blocks light");
+        // System.out.println("Blocks light, so does nothing with the lightProcessingQueue");
     }
 
     @Override
@@ -140,23 +140,28 @@ public class LightSource extends DynamicGridObject {
 
     private boolean isValidExit(GridCell[][] grid, int spotX, int spotY) {
         StaticGridObject sgo = grid[spotX][spotY].cellStaticItem;
-        if (sgo == WHITE_RECEIVER) {
-            return true;
-        } else if (sgo == EMPTY) {
-            DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
-            if (dgo == null) {
-                return true;
-            } else if (dgo.getClass() == LightSource.class) {
-                return false;
-            } else if (dgo.getClass() == ColourShifter.class
-                    && ((ColourShifter) dgo).orientation == getOppositeOrientation(this.orientation)) {
-                return false;
-            } else if (dgo.getClass() == Prism.class && ((Prism) dgo).orientation != this.orientation) {
-                return false;
-            }
-            return true;
-        } else {
-            return false;
-        }
+        // Source can directly face a white receiver
+        if (sgo == WHITE_RECEIVER) return true; 
+        
+        // If the grid is not empty at this point, its a wall or different color receiver
+        // which is not valid
+        if (sgo != EMPTY) return false; 
+        
+        DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
+        // Fully empty spot is valid
+        if (dgo == null) return true;
+
+        // Exit cannot be blocked by another light source
+        if (dgo.getClass() == LightSource.class) return false; 
+
+        // Exit cannot be blocked by a shifter that points into the light source.
+        if (dgo.getClass() == ColourShifter.class 
+                && ((ColourShifter) dgo).orientation == getOppositeOrientation(this.orientation)) return false;
+        
+        // Exit cannot be blocked by prism of improper orientation
+        if (dgo.getClass() == Prism.class && ((Prism) dgo).orientation != this.orientation) return false;
+
+        // Should not reach this case
+        return false;
     }
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import static model.interactionObjects.Colour.BLUE;
 
 
-public class BlueFilter extends Filter {
+public final class BlueFilter extends Filter {
 
     public BlueFilter() {
         super(BLUE);

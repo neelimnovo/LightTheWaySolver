@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 import static model.interactionObjects.Colour.RED;
 
-public class RedFilter extends Filter {
+public final class RedFilter extends Filter {
     public RedFilter() {
         super(RED);
     }

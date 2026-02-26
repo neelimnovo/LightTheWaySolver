@@ -13,7 +13,7 @@ import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.*;
 
 public class Prism extends DynamicGridObject {
-    FaceOrientation orientation;
+    public final FaceOrientation orientation;
 
     public Prism(FaceOrientation orientation) {
         this.orientation = orientation;

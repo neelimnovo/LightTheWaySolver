@@ -16,8 +16,8 @@ import static model.interactionObjects.StaticGridObject.WALL;
 
 
 public class ColourShifter extends DynamicGridObject {
-    FaceOrientation orientation;
-    Colour colour;
+    final FaceOrientation orientation;
+    final Colour colour;
 
     public ColourShifter(FaceOrientation orientation, Colour colour) {
         this.orientation = orientation;
@@ -25,7 +25,7 @@ public class ColourShifter extends DynamicGridObject {
     }
 
     @Override
-    public String getCorrectImageString() {
+    public final String getCorrectImageString() {
         switch (orientation) {
             case UP:
                 switch (colour) {
@@ -72,7 +72,7 @@ public class ColourShifter extends DynamicGridObject {
     // TODO Filtering should check neighbours for occlusion (aside from the exit)
     // EFFECTS: Filters based on whether the exit of the colour shifter has valid objects or not
     public ArrayList<Pair<Integer, Integer>> filter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
-        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>();
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
@@ -81,7 +81,6 @@ public class ColourShifter extends DynamicGridObject {
             }
         }
         return resultSpots;
-        // return emptySpots;
     }
 
     private boolean isValidExit(GridCell[][] grid, int spotX, int spotY) {
@@ -155,36 +154,18 @@ public class ColourShifter extends DynamicGridObject {
 
     @Override
     public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
-        Light interactedLight = null;
+        int x = light.xPos, y = light.yPos;
+        int nx = x, ny = y;
         switch (this.orientation) {
-            case UP:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                    interactedLight = new Light(this.colour, this.orientation, light.xPos, light.yPos - 1);
-                    grid[light.xPos][light.yPos - 1].light = interactedLight;
-                }
-                break;
-            case DOWN:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                    interactedLight = new Light(this.colour, this.orientation, light.xPos, light.yPos + 1);
-                    grid[light.xPos][light.yPos + 1].light = interactedLight;
-                }
-                break;
-            case LEFT:
-                if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                    interactedLight = new Light(this.colour, this.orientation, light.xPos - 1, light.yPos);
-                    grid[light.xPos - 1][light.yPos].light = interactedLight;
-                }
-                break;
-            case RIGHT:
-                if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                    interactedLight = new Light(this.colour, this.orientation, light.xPos + 1, light.yPos);
-                    grid[light.xPos + 1][light.yPos].light = interactedLight;
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + this.orientation);
+            case UP:    ny = y - 1; break;
+            case DOWN:  ny = y + 1; break;
+            case LEFT:  nx = x - 1; break;
+            case RIGHT: nx = x + 1; break;
+            default: throw new IllegalStateException("Unexpected value: " + this.orientation);
         }
-        if (interactedLight != null) {
+        if (GridLayout.isWithinBounds(grid, nx, ny)) {
+            Light interactedLight = new Light(this.colour, this.orientation, nx, ny);
+            grid[nx][ny].light = interactedLight;
             lightProcessingQueue.add(interactedLight);
         }
     }

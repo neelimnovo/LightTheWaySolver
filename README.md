@@ -43,3 +43,5 @@ TODO
     * front Mirrors
     * back Mirrors
 * Fix total permutations overflow with level 24
+* After beating a record, saving level solution saves solving time as zero seconds
+* double check t-junction, mirrors filter logic

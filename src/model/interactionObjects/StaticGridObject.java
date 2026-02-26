@@ -8,7 +8,7 @@ public enum StaticGridObject {
     WHITE_RECEIVER("White Receiver"),
     EMPTY("Empty");
 
-    private String stringVal;
+    private final String stringVal;
 
     StaticGridObject(String val) {
         this.stringVal = val;
@@ -19,40 +19,29 @@ public enum StaticGridObject {
         return stringVal;
     }
 
+    private static final java.util.Map<String, StaticGridObject> STRING_TO_ENUM_MAP = new java.util.HashMap<>();
+    static {
+        STRING_TO_ENUM_MAP.put("wall", WALL);
+        STRING_TO_ENUM_MAP.put("redReceiver", RED_RECEIVER);
+        STRING_TO_ENUM_MAP.put("blueReceiver", BLUE_RECEIVER);
+        STRING_TO_ENUM_MAP.put("yellowReceiver", YELLOW_RECEIVER);
+        STRING_TO_ENUM_MAP.put("whiteReceiver", WHITE_RECEIVER);
+        STRING_TO_ENUM_MAP.put("void", EMPTY);
+    }
+
     public static StaticGridObject getCorrectObject(String id) {
-        switch (id) {
-            case "wall":
-                return StaticGridObject.WALL;
-            case "redReceiver":
-                return StaticGridObject.RED_RECEIVER;
-            case "blueReceiver":
-                return StaticGridObject.BLUE_RECEIVER;
-            case "yellowReceiver":
-                return StaticGridObject.YELLOW_RECEIVER;
-            case "whiteReceiver":
-                return StaticGridObject.WHITE_RECEIVER;
-            case "void":
-                return StaticGridObject.EMPTY;
-        }
-        return null;
+        return STRING_TO_ENUM_MAP.get(id);
     }
 
     public static String getCorrectImageString(StaticGridObject sgo) {
-        switch (sgo) {
-            case WALL:
-                return "wall.png";
-            case RED_RECEIVER:
-                return "redReceiver.png";
-            case BLUE_RECEIVER:
-                return "blueReceiver.png";
-            case YELLOW_RECEIVER:
-                return "yellowReceiver.png";
-            case WHITE_RECEIVER:
-                return "whiteReceiver.png";
-            case EMPTY:
-                return "void.png";
-            default:
-                return null;
-        }
+        return switch (sgo) {
+            case WALL -> "wall.png";
+            case RED_RECEIVER -> "redReceiver.png";
+            case BLUE_RECEIVER -> "blueReceiver.png";
+            case YELLOW_RECEIVER -> "yellowReceiver.png";
+            case WHITE_RECEIVER -> "whiteReceiver.png";
+            case EMPTY -> "void.png";
+            default -> null;
+        };
     }
 }

@@ -125,7 +125,7 @@ public class LevelRender {
             renderSolvedGrid(renderedGrid, solver.solutionGrid);
         } else {
             statistics = null;
-            System.out.println("No solution found");
+            System.out.println("!!! No solution found for level !!!");
         }
     }
 

@@ -10,7 +10,7 @@ import java.util.LinkedList;
 
 import static model.interactionObjects.Colour.YELLOW;
 
-public class YellowFilter extends Filter {
+public final class YellowFilter extends Filter {
 
     public YellowFilter() {
         super(YELLOW);
