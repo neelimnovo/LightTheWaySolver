@@ -49,6 +49,23 @@ public class GridLayout {
         return copyGrid;
     }
 
+    public static GridCell[][] updateGridCellArray (GridCell[][] grid, DynamicGridObject dgo, int spotX, int spotY) {
+        // Shallow copy the grid array
+        GridCell[][] copyGrid = new GridCell[grid.length][grid[0].length];
+        for (int x = 0; x < grid.length; x++) {
+            System.arraycopy(grid[x], 0, copyGrid[x], 0, grid[0].length);
+        }
+        // Only update the changed cell
+        copyGrid[spotX][spotY] = new GridCell(
+            grid[spotX][spotY].cellStaticItem,
+            dgo, // new dynamic object
+            grid[spotX][spotY].receiver,
+            grid[spotX][spotY].light
+        );
+
+        return copyGrid;
+    }
+
     // EFFECTS: Checks if x and y are within the bounds of the gridcell dimensions
     public static boolean isWithinBounds(GridCell[][] grid, int x, int y) {
         return  (0 <= x)
