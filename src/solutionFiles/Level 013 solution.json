@@ -475,8 +475,8 @@
             }
         ]
     ],
-    "totalTime": 12771,
+    "totalTime": 3610,
     "totalPermutations": 379501200,
-    "attemptPermutations": 14304566,
-    "permutationRatio": 3.769
+    "attemptPermutations": 14159909,
+    "permutationRatio": 3.731
 }

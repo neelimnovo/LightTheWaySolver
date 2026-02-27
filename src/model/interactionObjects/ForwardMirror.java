@@ -26,13 +26,41 @@ public class ForwardMirror extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
+
             boolean topValid = isUnblockedMirrorSpot(grid, spotX, spotY - 1, UP);
             boolean downValid = isUnblockedMirrorSpot(grid, spotX, spotY + 1, DOWN);
             boolean leftValid = isUnblockedMirrorSpot(grid, spotX - 1, spotY, LEFT);
             boolean rightValid = isUnblockedMirrorSpot(grid, spotX + 1, spotY, RIGHT);
 
-            if ((leftValid || downValid) && (topValid || rightValid)
-                    && (topValid || downValid) && (leftValid || rightValid)) {
+            /**
+             * For forward mirror
+             *    # # # 
+             *    # / #
+             *    # # #
+             *  If the left side and top side are clear, one reflective side is functional. This is valid
+             *       |
+             *    -- / ##
+             *      ###
+             * 
+             *  If the bottom side and right side are clear, one reflective side is functional. This is valid
+             *    ### 
+             *  ## / --
+             *     |
+             * 
+             * Invalid examples
+             *  Top and bottom are invalid, neither side can reflect
+             *        ###
+             *      -- / --
+             *        ###
+             * 
+             * Left and right are invalid, neither side can reflect
+             *         |
+             *      ## / ##
+             *         | 
+             */
+
+            if ((leftValid && topValid)
+            || (rightValid && downValid)) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
         }

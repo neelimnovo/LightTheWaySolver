@@ -89,18 +89,15 @@ Time spent projecting light: 3167
     Time spent emitting light: 1392
     Time spent spreading light: 1269
         Time spent incrementing light: 842
-        Time spent interacting with light: 134
 Time spent checking receivers powered: 59
 
-Time spent filtering for DGO: 320
-Time spent copying grid: 21108
-Time spent copying DGO queue: 62
-Time spent projecting light: 4072
-    Time spent emitting light: 1433
-    Time spent spreading light: 1358
-        Time spent incrementing light: 955
-        Time spent interacting with light: 122
-Time spent checking receivers powered: 83
+Time spent filtering for DGO: 282
+Time spent copying grid: 23
+Time spent projecting light: 2098
+    Time spent emitting light: 431
+    Time spent spreading light: 1108
+        Time spent incrementing light: 553
+Time spent checking receivers powered: 150
 
 
 # L18

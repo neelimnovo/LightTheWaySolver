@@ -31,37 +31,71 @@ public class BackwardMirror extends DynamicGridObject {
             boolean leftValid = isUnblockedMirrorSpot(grid, spotX - 1, spotY, LEFT);
             boolean rightValid = isUnblockedMirrorSpot(grid, spotX + 1, spotY, RIGHT);
 
-            if ((topValid || leftValid) && (downValid || rightValid)
-                    && (topValid || downValid) && (leftValid || rightValid)) {
+            /**
+             * For back mirror
+             *    # # # 
+             *    # \ #
+             *    # # #
+             *  If the left side and bottom side are clear, one reflective side is functional. This is valid
+             *      ###
+             *    -- \ ##
+             *       |
+             * 
+             *  If the top side and right side are clear, one reflective side is functional. This is valid
+             *     | 
+             *  ## \ --
+             *    ###
+             * 
+             * Invalid examples
+             *  Top and bottom are invalid, neither side can reflect
+             *        ###
+             *      -- \ --
+             *        ###
+             * 
+             * Left and right are invalid, neither side can reflect
+             *         |
+             *      ## \ ##
+             *         | 
+             */
+            if ((leftValid && downValid) 
+            || (topValid && rightValid)) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
         }
         return resultSpots;
     }
 
+    /**
+     * Return true if the neighbouring spot is valid and unblocked
+     * Return false if the neighbouring spot is blocked, and hence one side of the mirror would be blocked
+     */
     static boolean isUnblockedMirrorSpot(GridCell[][] grid, int spotX, int spotY, FaceOrientation orientation) {
-        // Out of bounds check
         if (!GridLayout.isWithinBounds(grid, spotX, spotY)) return false;
         if (grid[spotX][spotY].cellStaticItem == WALL) return false;
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
         if (dgo == null) return true;
         switch (orientation) {
             case UP:
-                return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != DOWN)
-                        && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == DOWN)
-                        && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != DOWN);
+                // Fastest: check class first, then only cast if needed, order for likely early exit
+                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == DOWN) return false;
+                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != DOWN) return false;
+                // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != DOWN) return false;
+                return true;
             case DOWN:
-                return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != UP)
-                        && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == UP)
-                        && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != UP);
+                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == UP) return false;
+                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != UP) return false;
+                // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != UP) return false;
+                return true;
             case LEFT:
-                return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != RIGHT)
-                        && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == RIGHT)
-                        && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != RIGHT);
+                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == RIGHT) return false;
+                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != RIGHT) return false;
+                // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != RIGHT) return false;
+                return true;
             case RIGHT:
-                return (dgo.getClass() != TJunction.class || ((TJunction) dgo).orientation != LEFT)
-                        && (dgo.getClass() != ColourShifter.class || ((ColourShifter) dgo).orientation == LEFT)
-                        && (dgo.getClass() != LightSource.class || ((LightSource) dgo).orientation != LEFT);
+                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == LEFT) return false;
+                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != LEFT) return false;
+                // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != LEFT) return false;
+                return true;
             default:
                 throw new IllegalStateException("Unexpected value: " + orientation);
         }

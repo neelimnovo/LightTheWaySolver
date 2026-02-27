@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import static model.GridLayout.copyGridCellArray;
-import static model.GridLayout.updateGridCellArray;
 import static model.interactionObjects.StaticGridObject.*;
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.FaceOrientation.*;
@@ -59,14 +57,6 @@ public class LevelSolver {
         this.emptySpots = emptySpots;
     }
 
-    // Prints JVM max memory and available processors
-    public static void printJvmDiagnostics() {
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        int processors = Runtime.getRuntime().availableProcessors();
-        System.out.println("JVM Max Memory: " + maxMemory + " bytes (" + (maxMemory / (1024 * 1024)) + " MB)");
-        System.out.println("JVM Available Processors: " + processors);
-    }
-
     public void createStats(long emptySpots, long dynamicObjects) {
         totalPermutations = createStatsHelper(emptySpots, dynamicObjects);
         System.out.println("Total empty spots: " + emptySpots);
@@ -89,7 +79,8 @@ public class LevelSolver {
             long dgoTime = System.currentTimeMillis();
             DynamicGridObject dgo = dgoQueue.remove();
             ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
-            timeSpentFilteringForDGO += System.currentTimeMillis() - dgoTime;
+            dgoTime = System.currentTimeMillis() - dgoTime;
+            timeSpentFilteringForDGO = timeSpentFilteringForDGO + dgoTime;
             // System.out.println(dgoQueue + " " + dgoQueue.size());
             // System.out.println(dgo + " " + filteredEmptySpots.size());
             // Collections.shuffle(filteredEmptySpots);
@@ -98,98 +89,28 @@ public class LevelSolver {
                 int spotY = spot.getValue();
                 if (grid[spotX][spotY].cellDynamicItem == null) {
                     trackLightSources(dgo, spotX, spotY);
-                    long dgoCopyTime = System.currentTimeMillis();
-                    // GridCell[][] copyGrid = updateGridCellArray(grid, dgo, spotX, spotY);
-                    GridCell[][] copyGrid = copyGridCellArray(grid);
-                    copyGrid[spotX][spotY].cellDynamicItem = dgo;
-                    timeSpentCopyingGrid += System.currentTimeMillis() - dgoCopyTime;
-                    LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-                    boolean isSolutionFound = solveLevelOriginal(copyGrid, this.emptySpots, copyQueue);
+                    grid[spotX][spotY].cellDynamicItem = dgo;
+                    
+                    boolean isSolutionFound = solveLevelOriginal(grid, this.emptySpots, dgoQueue);
                     if (isSolutionFound) {
                         return true;
                     }
-                    // grid[spotX][spotY].cellDynamicItem = null;
+
+                    // Backtrack
+                    grid[spotX][spotY].cellDynamicItem = null;
+                    if (dgo instanceof LightSource) {
+                        sourceSpots.remove(dgo);
+                    }
+                    
                 }
             }
+            dgoQueue.addFirst(dgo);
         } else {
             return projectLight(grid);
         }
-        // unable to convince compiler that this statement is unreachable because of dynamic recursion
         return false;
     }
 
-    public boolean solveLevel2(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots,
-                              LinkedList<DynamicGridObject> dgoQueue) {
-        // Convert the dgoQueue into an arraylist
-        ArrayList<DynamicGridObject> dgoArrayList = new ArrayList<>(dgoQueue);
-
-        // Solve level using a for loop
-        // GridCell[][] loopGrid = updateGridCellArray(grid);
-        // for each DGO
-        // place them onto the grid one by one, by checking filtered Empty spots
-
-
-        // for (DynamicGridObject dgo : dgoArrayList) {
-        //     ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(loopGrid, this.emptySpots);
-
-        //     int spotX = spot.getKey();
-        //     int spotY = spot.getValue();
-        //     if (loopGrid[spotX][spotY].cellDynamicItem == null) {
-        //             trackLightSources(dgo, spotX, spotY);
-        //             loopGrid[spotX][spotY].cellDynamicItem = dgo;
-        //             LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-        //             boolean isSolutionFound = solveLevel2(copyGrid, this.emptySpots, copyQueue);
-        //             if (isSolutionFound) {
-        //                 return true;
-        //             }
-        //             // grid[spotX][spotY].cellDynamicItem = null;
-        //         }
-
-        //     for (Pair<Integer, Integer> spot : filteredEmptySpots) {
-
-        //         int spotX = spot.getKey();
-        //         int spotY = spot.getValue();
-        //         if (loopGrid[spotX][spotY].cellDynamicItem == null) {
-        //             trackLightSources(dgo, spotX, spotY);
-        //             loopGrid[spotX][spotY].cellDynamicItem = dgo;
-        //             LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-        //             boolean isSolutionFound = solveLevel2(copyGrid, this.emptySpots, copyQueue);
-        //             if (isSolutionFound) {
-        //                 return true;
-        //             }
-        //             // grid[spotX][spotY].cellDynamicItem = null;
-        //         }
-        //     }
-        // }
-                                
-        // if (!dgoQueue.isEmpty()) {
-        //     // System.out.println(!dgoQueue.isEmpty());
-        //     DynamicGridObject dgo = dgoQueue.remove();
-        //     ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
-        //     // System.out.println(dgoQueue + " " + dgoQueue.size());
-        //     // System.out.println(dgo + " " + filteredEmptySpots.size());
-        //     // Collections.shuffle(filteredEmptySpots);
-        //     for (Pair<Integer, Integer> spot : filteredEmptySpots) {
-        //         int spotX = spot.getKey();
-        //         int spotY = spot.getValue();
-        //         if (grid[spotX][spotY].cellDynamicItem == null) {
-        //             trackLightSources(dgo, spotX, spotY);
-        //             GridCell[][] copyGrid = copyGridCellArray(grid);
-        //             copyGrid[spotX][spotY].cellDynamicItem = dgo;
-        //             LinkedList<DynamicGridObject> copyQueue = new LinkedList<>(dgoQueue);
-        //             boolean isSolutionFound = solveLevel2(copyGrid, this.emptySpots, copyQueue);
-        //             if (isSolutionFound) {
-        //                 return true;
-        //             }
-        //             // grid[spotX][spotY].cellDynamicItem = null;
-        //         }
-        //     }
-        // } else {
-        //     return projectLight(grid);
-        // }
-        // // unable to convince compiler that this statement is unreachable because of dynamic recursion
-        return false;
-    }
 
     // EFFECTS: Starts light projecting for the level until it is complete
     // Then indicates whether level is solved or not
@@ -224,6 +145,7 @@ public class LevelSolver {
                 int spotY = spot.getValue();
                 grid[spotX][spotY].receiver.isPowered = false;
             }
+            GridLayout.resetLightInGridCellArray(grid);
         timeSpentProjectingLight += System.currentTimeMillis() - emitTime;
          return false;
         }
@@ -255,24 +177,26 @@ public class LevelSolver {
     private void spreadLight(Light light, GridCell[][] grid) {
         long spreadTime = System.currentTimeMillis();
         StaticGridObject sgo = grid[light.xPos][light.yPos].cellStaticItem;
-        if (sgo.equals(EMPTY)) {
+        if (sgo == EMPTY) {
             DynamicGridObject dgo = grid[light.xPos][light.yPos].cellDynamicItem;
             if (dgo != null) {
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
                 timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
                 return;
+            } else{
+                incrementLight(light, grid);
+                timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
+                return;
             }
-            incrementLight(light, grid);
-            timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
-            return;
-        }
-        if (sgo.equals(WALL)) {
+        } else if (sgo == WALL) {
             timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
             return; // Do nothing
         }
-        // If it is not empty, or a wall, it must be a receiver
-        grid[light.xPos][light.yPos].receiver.powerUp(light);
-        timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
+        else {
+            // If it is not empty, or a wall, it must be a receiver
+            grid[light.xPos][light.yPos].receiver.powerUp(light);
+            timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
+        }
     }
 
     // EFFECTS: Starts emitting light from the light sources and adds them to the light processing queue
@@ -283,34 +207,16 @@ public class LevelSolver {
             int spotY = sourceSpot.getValue();
             LightSource lightSource = (LightSource) grid[spotX][spotY].cellDynamicItem;
             Light startingLight = null;
+            int newX = spotX, newY = spotY;
+            // Light source will never be placed next to bounds, so no out of bounds check needed
             switch (lightSource.orientation) {
-                case UP:
-                    if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
-                        startingLight = new Light(WHITE, UP, spotX, spotY - 1);
-                        grid[spotX][spotY - 1].light = startingLight;
-                    }
-                    break;
-                case DOWN:
-                    if (GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
-                        startingLight = new Light(WHITE, DOWN, spotX, spotY + 1);
-                        grid[spotX][spotY + 1].light = startingLight;
-                    }
-                    break;
-                case LEFT:
-                    if (GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
-                        startingLight = new Light(WHITE, LEFT, spotX - 1, spotY);
-                        grid[spotX - 1][spotY].light = startingLight;
-                    }
-                    break;
-                case RIGHT:
-                    if (GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
-                        startingLight = new Light(WHITE, RIGHT, spotX + 1, spotY);
-                        grid[spotX + 1][spotY].light = startingLight;
-                    }
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + lightSource.orientation);
+                case UP:    newY = spotY - 1; break;
+                case DOWN:  newY = spotY + 1; break;
+                case LEFT:  newX = spotX - 1; break;
+                case RIGHT: newX = spotX + 1; break;
             }
+            startingLight = new Light(WHITE, lightSource.orientation, newX, newY);
+            grid[newX][newY].light = startingLight;
             lightProcessingQueue.add(startingLight);
         }
         timeSpentEmittingLight += System.currentTimeMillis() - emitTime;
@@ -325,32 +231,34 @@ public class LevelSolver {
 
     // EFFECTS: Increments the light one grid cell at a time if it is possible to do so
     // in the original direction of the light
+    // Skips increment if it hits a wall, or goes out of bounds
     private void incrementLight(Light light, GridCell[][] grid) {
         long incrementTime = System.currentTimeMillis();
         Light incrementedLight = null;
+        int x = light.xPos, y = light.yPos;
         switch (light.orientation) {
             case UP:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                    incrementedLight = new Light(light.colour, light.orientation, light.xPos, light.yPos - 1);
-                    grid[light.xPos][light.yPos - 1].light = incrementedLight;
+                if (GridLayout.isWithinBounds(grid, x, y - 1) && grid[x][y - 1].cellStaticItem != WALL ) {
+                    incrementedLight = new Light(light.colour, light.orientation, x, y - 1);
+                    grid[x][y - 1].light = incrementedLight;
                 }
                 break;
             case DOWN:
-                if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                    incrementedLight = new Light(light.colour, light.orientation, light.xPos, light.yPos + 1);
-                    grid[light.xPos][light.yPos + 1].light = incrementedLight;
+                if (GridLayout.isWithinBounds(grid, x, y + 1) && grid[x][y + 1].cellStaticItem != WALL) {
+                    incrementedLight = new Light(light.colour, light.orientation, x, y + 1);
+                    grid[x][y + 1].light = incrementedLight;
                 }
                 break;
             case LEFT:
-                if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                    incrementedLight = new Light(light.colour, light.orientation, light.xPos - 1, light.yPos);
-                    grid[light.xPos - 1][light.yPos].light = incrementedLight;
+                if (GridLayout.isWithinBounds(grid, x - 1, y) && grid[x - 1][y].cellStaticItem != WALL) {
+                    incrementedLight = new Light(light.colour, light.orientation, x - 1, y);
+                    grid[x - 1][y].light = incrementedLight;
                 }
                 break;
             case RIGHT:
-                if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                    incrementedLight = new Light(light.colour, light.orientation, light.xPos + 1, light.yPos);
-                    grid[light.xPos + 1][light.yPos].light = incrementedLight;
+                if (GridLayout.isWithinBounds(grid, x + 1, y) && grid[x + 1][y].cellStaticItem != WALL) {
+                    incrementedLight = new Light(light.colour, light.orientation, x + 1, y);
+                    grid[x + 1][y].light = incrementedLight;
                 }
                 break;
             default:
