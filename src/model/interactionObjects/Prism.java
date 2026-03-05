@@ -42,14 +42,10 @@ public class Prism extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
-            if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)
-                    && isValidNeighbour(grid, spotX, spotY - 1, UP)
-                    && GridLayout.isWithinBounds(grid, spotX, spotY + 1)
-                    && isValidNeighbour(grid, spotX, spotY + 1, DOWN)
-                    && GridLayout.isWithinBounds(grid, spotX - 1, spotY)
-                    && isValidNeighbour(grid, spotX - 1, spotY, LEFT)
-                    && GridLayout.isWithinBounds(grid, spotX + 1, spotY)
-                    && isValidNeighbour(grid, spotX + 1, spotY, RIGHT)) {
+            if (isValidNeighbour(grid, spotX, spotY - 1, UP)
+                && isValidNeighbour(grid, spotX, spotY + 1, DOWN)
+                && isValidNeighbour(grid, spotX - 1, spotY, LEFT)
+                && isValidNeighbour(grid, spotX + 1, spotY, RIGHT)) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
         }
@@ -57,17 +53,15 @@ public class Prism extends DynamicGridObject {
     }
 
     private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation neighbourSpot) {
-        if (grid[spotX][spotY].cellStaticItem == WALL) {
-            return false;
-        } else if (grid[spotX][spotY].cellStaticItem == EMPTY) {
+        if (!GridLayout.isWithinBounds(grid, spotX, spotY)) return false;
+        if (grid[spotX][spotY].cellStaticItem == WALL) return false;
+        if (grid[spotX][spotY].cellStaticItem == EMPTY) {
             DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
-            if (dgo == null) {
-                return true;
-            } else {
-                // Neighbour cannot be a prism. This is the first DGO to be placed, so doesn't have to search for others
-                return dgo.getClass() != Prism.class;
-            }
+            if (dgo == null) return true;
+            // Neighbour cannot be a prism. This is the first DGO to be placed, so doesn't have to filter for other DGO types
+            return !(dgo instanceof Prism);
         } else {
+            // If the static item is not a WALL or EMPTY, it must be a receiver
             switch (this.orientation) {
                 case UP: // For a prism facing up, top is red, left is blue, right is yellow, bottom is white
                     switch (neighbourSpot) {
@@ -126,79 +120,65 @@ public class Prism extends DynamicGridObject {
     @Override
     // EFFECTS: Takes in white light and emits red, blue and yellow light along sides
     public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
-        Light prismRedLight = null;
-        Light prismBlueLight = null;
-        Light prismYellowLight = null;
         if (light.colour == WHITE && this.orientation == light.orientation) {
+            Light prismRedLight = null;
+            Light prismBlueLight = null;
+            Light prismYellowLight = null;
+            int xPos = light.xPos;
+            int yPos = light.yPos;
+            int upPos = yPos - 1;
+            int downPos = yPos + 1;
+            int leftPos = xPos - 1;
+            int rightPos = xPos + 1;
             switch (this.orientation) {
                 case UP:
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                        prismRedLight = new Light(RED, UP, light.xPos, light.yPos - 1);
-                        grid[light.xPos][light.yPos - 1].light = prismRedLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                        prismBlueLight = new Light(BLUE, LEFT, light.xPos - 1, light.yPos);
-                        grid[light.xPos - 1][light.yPos].light = prismBlueLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                        prismYellowLight = new Light(YELLOW, RIGHT, light.xPos + 1, light.yPos);
-                        grid[light.xPos + 1][light.yPos].light = prismYellowLight;
-                    }
+                    prismRedLight = new Light(RED, UP, xPos, upPos);
+                    grid[xPos][upPos].light = prismRedLight;
+
+                    prismBlueLight = new Light(BLUE, LEFT, leftPos, yPos);
+                    grid[leftPos][yPos].light = prismBlueLight;
+
+                    prismYellowLight = new Light(YELLOW, RIGHT, rightPos, yPos);
+                    grid[rightPos][yPos].light = prismYellowLight;
                     break;
                 case DOWN:
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                        prismRedLight = new Light(RED, DOWN, light.xPos, light.yPos + 1);
-                        grid[light.xPos][light.yPos + 1].light = prismRedLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                        prismBlueLight = new Light(BLUE, RIGHT, light.xPos + 1, light.yPos);
-                        grid[light.xPos + 1][light.yPos].light = prismBlueLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                        prismYellowLight = new Light(YELLOW, LEFT, light.xPos - 1, light.yPos);
-                        grid[light.xPos - 1][light.yPos].light = prismYellowLight;
-                    }
+                    prismRedLight = new Light(RED, DOWN, xPos, downPos);
+                    grid[xPos][downPos].light = prismRedLight;
+
+                    prismBlueLight = new Light(BLUE, RIGHT, rightPos, yPos);
+                    grid[rightPos][yPos].light = prismBlueLight;
+
+                    prismYellowLight = new Light(YELLOW, LEFT, leftPos, yPos);
+                    grid[leftPos][yPos].light = prismYellowLight;
                     break;
                 case LEFT:
-                    if (GridLayout.isWithinBounds(grid, light.xPos - 1, light.yPos)) {
-                        prismRedLight = new Light(RED, LEFT, light.xPos - 1, light.yPos);
-                        grid[light.xPos - 1][light.yPos].light = prismRedLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                        prismBlueLight = new Light(BLUE, DOWN, light.xPos, light.yPos + 1);
-                        grid[light.xPos][light.yPos + 1].light = prismBlueLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                        prismYellowLight = new Light(YELLOW, UP, light.xPos, light.yPos - 1);
-                        grid[light.xPos][light.yPos - 1].light = prismYellowLight;
-                    }
+                    prismRedLight = new Light(RED, LEFT, leftPos, yPos);
+                    grid[leftPos][yPos].light = prismRedLight;
+
+                    prismBlueLight = new Light(BLUE, DOWN, xPos, downPos);
+                    grid[xPos][downPos].light = prismBlueLight;
+
+                    prismYellowLight = new Light(YELLOW, UP, xPos, upPos);
+                    grid[xPos][upPos].light = prismYellowLight;
                     break;
                 case RIGHT:
-                    if (GridLayout.isWithinBounds(grid, light.xPos + 1, light.yPos)) {
-                        prismRedLight = new Light(RED, RIGHT, light.xPos + 1, light.yPos);
-                        grid[light.xPos + 1][light.yPos].light = prismRedLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos - 1)) {
-                        prismBlueLight = new Light(BLUE, UP, light.xPos, light.yPos - 1);
-                        grid[light.xPos][light.yPos - 1].light = prismBlueLight;
-                    }
-                    if (GridLayout.isWithinBounds(grid, light.xPos, light.yPos + 1)) {
-                        prismYellowLight = new Light(YELLOW, DOWN, light.xPos, light.yPos + 1);
-                        grid[light.xPos][light.yPos + 1].light = prismYellowLight;
-                    }
+                    prismRedLight = new Light(RED, RIGHT, rightPos, yPos);
+                    grid[rightPos][yPos].light = prismRedLight;
+
+                    prismBlueLight = new Light(BLUE, UP, xPos, upPos);
+                    grid[xPos][upPos].light = prismBlueLight;
+
+                    prismYellowLight = new Light(YELLOW, DOWN, xPos, downPos);
+                    grid[xPos][downPos].light = prismYellowLight;
                     break;
-            }
-            if (prismRedLight != null) {
-                lightProcessingQueue.add(prismRedLight);
-            }
-            if (prismBlueLight != null) {
-                lightProcessingQueue.add(prismBlueLight);
-            }
-            if (prismYellowLight != null) {
-                lightProcessingQueue.add(prismYellowLight);
-            }
-        }
+            }            
+
+            lightProcessingQueue.add(prismRedLight);
+            lightProcessingQueue.add(prismBlueLight);
+            lightProcessingQueue.add(prismYellowLight);
+        }        
     }
+    
 
     @Override
     public String toString() {
