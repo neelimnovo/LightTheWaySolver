@@ -77,23 +77,23 @@ public class BackwardMirror extends DynamicGridObject {
         switch (orientation) {
             case UP:
                 // Fastest: check class first, then only cast if needed, order for likely early exit
-                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == DOWN) return false;
-                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != DOWN) return false;
+                if (dgo instanceof TJunction && ((TJunction) dgo).orientation == DOWN) return false;
+                if (dgo instanceof LightSource && ((LightSource) dgo).orientation != DOWN) return false;
                 // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != DOWN) return false;
                 return true;
             case DOWN:
-                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == UP) return false;
-                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != UP) return false;
+                if (dgo instanceof TJunction && ((TJunction) dgo).orientation == UP) return false;
+                if (dgo instanceof LightSource && ((LightSource) dgo).orientation != UP) return false;
                 // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != UP) return false;
                 return true;
             case LEFT:
-                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == RIGHT) return false;
-                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != RIGHT) return false;
+                if (dgo instanceof TJunction && ((TJunction) dgo).orientation == RIGHT) return false;
+                if (dgo instanceof LightSource && ((LightSource) dgo).orientation != RIGHT) return false;
                 // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != RIGHT) return false;
                 return true;
             case RIGHT:
-                if (dgo.getClass() == TJunction.class && ((TJunction) dgo).orientation == LEFT) return false;
-                if (dgo.getClass() == LightSource.class && ((LightSource) dgo).orientation != LEFT) return false;
+                if (dgo instanceof TJunction && ((TJunction) dgo).orientation == LEFT) return false;
+                if (dgo instanceof LightSource && ((LightSource) dgo).orientation != LEFT) return false;
                 // if (dgo.getClass() == ColourShifter.class && ((ColourShifter) dgo).orientation != LEFT) return false;
                 return true;
             default:

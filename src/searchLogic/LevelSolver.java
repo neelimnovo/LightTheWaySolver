@@ -41,7 +41,6 @@ public class LevelSolver {
      *  
      */
     public long timeSpentFilteringForDGO = 0;
-    public long timeSpentCopyingGrid = 0;
     public long timeSpentProjectingLight = 0;
     public long timeSpentEmittingLight = 0;
     public long timeSpentSpreadingLight = 0;
@@ -59,6 +58,7 @@ public class LevelSolver {
 
     public void createStats(long emptySpots, long dynamicObjects) {
         totalPermutations = createStatsHelper(emptySpots, dynamicObjects);
+        System.out.println("Number of DynamicObjects: " + dynamicObjects);
         System.out.println("Total empty spots: " + emptySpots);
         System.out.println("Total permutations: " + totalPermutations);
     }
@@ -80,24 +80,25 @@ public class LevelSolver {
             DynamicGridObject dgo = dgoQueue.remove();
             ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
             dgoTime = System.currentTimeMillis() - dgoTime;
-            timeSpentFilteringForDGO = timeSpentFilteringForDGO + dgoTime;
+            timeSpentFilteringForDGO += dgoTime;
             // System.out.println(dgoQueue + " " + dgoQueue.size());
             // System.out.println(dgo + " " + filteredEmptySpots.size());
             // Collections.shuffle(filteredEmptySpots);
             for (Pair<Integer, Integer> spot : filteredEmptySpots) {
                 int spotX = spot.getKey();
                 int spotY = spot.getValue();
-                if (grid[spotX][spotY].cellDynamicItem == null) {
+                GridCell cell = grid[spotX][spotY];
+                if (cell.cellDynamicItem == null) {
                     trackLightSources(dgo, spotX, spotY);
-                    grid[spotX][spotY].cellDynamicItem = dgo;
-                    
+                    cell.cellDynamicItem = dgo;
+
                     boolean isSolutionFound = solveLevelOriginal(grid, this.emptySpots, dgoQueue);
                     if (isSolutionFound) {
                         return true;
                     }
 
                     // Backtrack
-                    grid[spotX][spotY].cellDynamicItem = null;
+                    cell.cellDynamicItem = null;
                     if (dgo instanceof LightSource) {
                         sourceSpots.remove(dgo);
                     }
@@ -108,7 +109,7 @@ public class LevelSolver {
         } else {
             return projectLight(grid);
         }
-        return false;
+        return false;        
     }
 
 
@@ -116,21 +117,20 @@ public class LevelSolver {
     // Then indicates whether level is solved or not
     public boolean projectLight(GridCell[][] grid) {
         long emitTime = System.currentTimeMillis();
+        long projectTime = System.currentTimeMillis();
         emitLight(grid);
+        emitTime = System.currentTimeMillis() - emitTime;
+        timeSpentEmittingLight += emitTime;
         while (!lightProcessingQueue.isEmpty()) {
             Light light = lightProcessingQueue.remove();
             spreadLight(light, grid);
         }
         // GridCell.printGridCell(grid);
         attemptPermutations++;
-//        if (attemptPermutations % 100000 == 0) {
-//            System.out.println(attemptPermutations);
-//        }
         if (allReceiversArePowered(receiverSpots, grid)) {
-            timeSpentProjectingLight += System.currentTimeMillis() - emitTime;
+            timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
 
             System.out.println("Time spent filtering for DGO: " + timeSpentFilteringForDGO);
-            System.out.println("Time spent copying grid: " + timeSpentCopyingGrid);
             System.out.println("Time spent projecting light: " + timeSpentProjectingLight);
             System.out.println("Time spent emitting light: " + timeSpentEmittingLight);
             System.out.println("Time spent spreading light: " + timeSpentSpreadingLight);
@@ -146,8 +146,8 @@ public class LevelSolver {
                 grid[spotX][spotY].receiver.isPowered = false;
             }
             GridLayout.resetLightInGridCellArray(grid);
-        timeSpentProjectingLight += System.currentTimeMillis() - emitTime;
-         return false;
+            timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
+            return false;
         }
     }
 
@@ -163,7 +163,7 @@ public class LevelSolver {
             }
         System.out.println("Number of attempts: " + attemptPermutations);
         this.solutionGrid = grid;
-        System.out.println("found solution");
+        System.out.println("Found solution!");
         //GridCell.printGridCell(solutionGrid);
         timeSpentCheckingReceiversPowered += System.currentTimeMillis() - checkTime;
         return true;
@@ -176,9 +176,11 @@ public class LevelSolver {
     // 4) If the current gridCell is a receiver, attempt to power it up with the light
     private void spreadLight(Light light, GridCell[][] grid) {
         long spreadTime = System.currentTimeMillis();
-        StaticGridObject sgo = grid[light.xPos][light.yPos].cellStaticItem;
+        int x = light.xPos;
+        int y = light.yPos;
+        StaticGridObject sgo = grid[x][y].cellStaticItem;
         if (sgo == EMPTY) {
-            DynamicGridObject dgo = grid[light.xPos][light.yPos].cellDynamicItem;
+            DynamicGridObject dgo = grid[x][y].cellDynamicItem;
             if (dgo != null) {
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
                 timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
@@ -194,7 +196,7 @@ public class LevelSolver {
         }
         else {
             // If it is not empty, or a wall, it must be a receiver
-            grid[light.xPos][light.yPos].receiver.powerUp(light);
+            grid[x][y].receiver.powerUp(light);
             timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
         }
     }

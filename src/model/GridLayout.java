@@ -88,6 +88,7 @@ public class GridLayout {
     }
 
     // EFFECTS: Checks if x and y are within the bounds of the gridcell dimensions
+    // TODO: Optimize by directly passing in grid dimensions instead of the whole grid
     public static boolean isWithinBounds(GridCell[][] grid, int x, int y) {
         return  (0 <= x)
                 && (x < grid.length)

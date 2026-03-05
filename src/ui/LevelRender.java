@@ -170,6 +170,9 @@ public class LevelRender {
         }
 
         // The order of these method calls and hence dgoQueue setup is super important
+        // TODO Improve placement logic e.g depending on if only  subset of the items are used
+        // it might make sense to place them first over others
+        // Specific example: If only sources, filters and mirrors, maybe place sources first
         placeDynamicGridObjects(gridLayout.prisms, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.redFilters, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.blueFilters, renderedGrid, viableCoordinates, dgoQueue);
