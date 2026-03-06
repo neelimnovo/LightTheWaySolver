@@ -114,7 +114,8 @@ public class LevelRender {
                                             ArrayList<Pair<Integer, Integer>> emptyPositions,
                                             ArrayList<Pair<Integer, Integer>> receiverPositions,
                                             LinkedList<DynamicGridObject> dgoQueue) {
-        LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions);
+        LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions,
+            gridLayout.gridCellArray.length, gridLayout.gridCellArray[0].length);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
         long startTime = System.currentTimeMillis();
         solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue);

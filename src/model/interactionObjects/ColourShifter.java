@@ -7,9 +7,8 @@ import model.interactionObjects.filters.BlueFilter;
 import model.interactionObjects.filters.RedFilter;
 import model.interactionObjects.filters.YellowFilter;
 import searchLogic.Light;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.StaticGridObject.WALL;
@@ -153,7 +152,7 @@ public class ColourShifter extends DynamicGridObject {
     }
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         int x = light.xPos, y = light.yPos;
         int nx = x, ny = y;
         switch (this.orientation) {

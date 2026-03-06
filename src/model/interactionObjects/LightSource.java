@@ -4,12 +4,10 @@ import javafx.util.Pair;
 import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.FaceOrientation.*;
-import static model.interactionObjects.FaceOrientation.getOppositeOrientation;
 import static model.interactionObjects.StaticGridObject.*;
 
 public class LightSource extends DynamicGridObject {
@@ -129,7 +127,7 @@ public class LightSource extends DynamicGridObject {
     }
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         // System.out.println("Blocks light, so does nothing with the lightProcessingQueue");
     }
 

@@ -2,12 +2,11 @@ package model.interactionObjects.filters;
 
 import javafx.util.Pair;
 import model.GridCell;
-import model.GridLayout;
-import model.interactionObjects.*;
+import model.GridLayout.isWithinBounds;
 import searchLogic.Light;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.FaceOrientation.*;
@@ -156,7 +155,7 @@ public abstract class Filter extends DynamicGridObject {
         return receiver == null || receiver.colour == this.colour;
     }
 
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         // Only interact with the light if the light is of the same colour or white
         if (light.colour == WHITE || light.colour == this.colour) {
             int x = light.xPos, y = light.yPos;

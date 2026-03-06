@@ -5,7 +5,7 @@ import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.*;
@@ -268,7 +268,7 @@ public class TJunction extends DynamicGridObject {
 
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         if (this.orientation == light.orientation) {
             int x1 = light.xPos;
             int y1 = light.yPos;

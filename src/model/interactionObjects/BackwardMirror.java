@@ -4,9 +4,8 @@ import javafx.util.Pair;
 import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.EMPTY;
@@ -103,7 +102,7 @@ public class BackwardMirror extends DynamicGridObject {
 
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         int x = light.xPos, y = light.yPos;
         int newX = x, newY = y;
         FaceOrientation newLightOrientation;

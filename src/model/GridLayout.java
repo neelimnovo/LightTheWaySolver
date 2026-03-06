@@ -95,4 +95,11 @@ public class GridLayout {
                 && (0 <= y)
                 && (y < grid[0].length);
     }
+
+    public static boolean isWithinBounds(int gridWidth, int gridHeight, int x, int y) {
+        return  (0 <= x)
+                && (x < gridWidth)
+                && (0 <= y)
+                && (y < gridHeight);
+    }
 }

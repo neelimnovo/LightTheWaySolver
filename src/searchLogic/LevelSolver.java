@@ -8,6 +8,7 @@ import model.interactionObjects.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.StaticGridObject.*;
 import static model.interactionObjects.Colour.*;
@@ -18,13 +19,16 @@ public class LevelSolver {
     // UP=0, DOWN=1, LEFT=2, RIGHT=3
     private static final int[] DX = {0, 0, -1, 1};
     private static final int[] DY = {-1, 1, 0, 0};
+
+    private final int gridWidth, gridHeight;
+
     // Initialised in LevelRender
     ArrayList<Pair<Integer, Integer>> receiverSpots;
     ArrayList<Pair<Integer, Integer>> emptySpots;
 
     // Initialised in the solveLevel method
     HashMap<LightSource, Pair<Integer, Integer>> sourceSpots;
-    LinkedList<Light> lightProcessingQueue;
+    ArrayDeque<Light> lightProcessingQueue;
     
     public GridCell[][] solutionGrid;
 
@@ -53,11 +57,14 @@ public class LevelSolver {
     public long timeSpentCheckingReceiversPowered = 0;
 
 
-    public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots, ArrayList<Pair<Integer, Integer>> emptySpots) {
+    public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots, ArrayList<Pair<Integer, Integer>> emptySpots,
+                        int gridWidth, int gridHeight) {
         this.receiverSpots = receiverSpots;
-        lightProcessingQueue = new LinkedList<>();
+        lightProcessingQueue = new ArrayDeque<>();
         sourceSpots = new HashMap<>();
         this.emptySpots = emptySpots;
+        this.gridWidth = gridWidth;
+        this.gridHeight = gridHeight;
     }
 
     public void createStats(long emptySpots, long dynamicObjects) {
@@ -123,7 +130,10 @@ public class LevelSolver {
         timeSpentEmittingLight += emitTime;
         while (!lightProcessingQueue.isEmpty()) {
             Light light = lightProcessingQueue.remove();
+            long spreadTime = System.currentTimeMillis();
             spreadLight(light, grid);
+            spreadTime = System.currentTimeMillis() - spreadTime;
+            timeSpentSpreadingLight += spreadTime;
         }
         attemptPermutations++;
         if (allReceiversArePowered(receiverSpots, grid)) {
@@ -173,7 +183,6 @@ public class LevelSolver {
     // 3) If the current gridCell is a wall, stops the spread of light by doing nothing
     // 4) If the current gridCell is a receiver, attempt to power it up with the light
     private void spreadLight(Light light, GridCell[][] grid) {
-        long spreadTime = System.currentTimeMillis();
         int x = light.xPos;
         int y = light.yPos;
         StaticGridObject sgo = grid[x][y].cellStaticItem;
@@ -181,21 +190,17 @@ public class LevelSolver {
             DynamicGridObject dgo = grid[x][y].cellDynamicItem;
             if (dgo != null) {
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
-                timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
                 return;
             } else{
                 incrementLight(light, grid);
-                timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
                 return;
             }
         } else if (sgo == WALL) {
-            timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
             return; // Do nothing
         }
         else {
             // If it is not empty, or a wall, it must be a receiver
             grid[x][y].receiver.powerUp(light);
-            timeSpentSpreadingLight += System.currentTimeMillis() - spreadTime;
         }
     }
 
@@ -232,7 +237,7 @@ public class LevelSolver {
         int ord = light.orientation.ordinal();
         int nx = light.xPos + DX[ord];
         int ny = light.yPos + DY[ord];
-        if (GridLayout.isWithinBounds(grid, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
+        if (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
             Light incrementedLight = new Light(light.colour, light.orientation, nx, ny);
             grid[nx][ny].light = incrementedLight;
             lightProcessingQueue.add(incrementedLight);

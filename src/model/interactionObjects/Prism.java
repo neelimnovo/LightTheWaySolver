@@ -4,9 +4,8 @@ import javafx.util.Pair;
 import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.FaceOrientation.*;
@@ -119,7 +118,7 @@ public class Prism extends DynamicGridObject {
 
     @Override
     // EFFECTS: Takes in white light and emits red, blue and yellow light along sides
-    public void interactWithLight(Light light, GridCell[][] grid, LinkedList<Light> lightProcessingQueue) {
+    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
         if (light.colour == WHITE && this.orientation == light.orientation) {
             Light prismRedLight = null;
             Light prismBlueLight = null;

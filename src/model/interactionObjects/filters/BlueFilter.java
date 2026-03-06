@@ -1,10 +1,6 @@
 package model.interactionObjects.filters;
 
-import javafx.util.Pair;
-import model.GridCell;
-import java.util.ArrayList;
 import static model.interactionObjects.Colour.BLUE;
-
 
 public final class BlueFilter extends Filter {
 
