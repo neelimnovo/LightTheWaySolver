@@ -2,7 +2,8 @@ package model.interactionObjects.filters;
 
 import javafx.util.Pair;
 import model.GridCell;
-import model.GridLayout.isWithinBounds;
+import model.GridLayout;
+import model.interactionObjects.*;
 import searchLogic.Light;
 
 import java.util.ArrayList;
