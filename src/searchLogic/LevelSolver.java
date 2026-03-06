@@ -3,6 +3,7 @@ package searchLogic;
 import javafx.util.Pair;
 import model.GridCell;
 import model.GridLayout;
+import model.interactionObjects.filters.*;
 import model.interactionObjects.*;
 
 import java.util.ArrayList;

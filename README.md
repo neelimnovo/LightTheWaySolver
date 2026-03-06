@@ -42,8 +42,6 @@ TODO
     * back Mirrors (maybe bugged)
     * shifters
 
-    
-* TODO level 15, no solution found bug
 * Fix total permutations overflow with level 24
 * After beating a record, saving level solution saves solving time as zero seconds
 * What is the longest step of testing one iteration?

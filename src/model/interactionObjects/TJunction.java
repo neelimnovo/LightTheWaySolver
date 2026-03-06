@@ -11,7 +11,7 @@ import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.*;
 
 public class TJunction extends DynamicGridObject {
-    FaceOrientation orientation;
+    public FaceOrientation orientation;
 
     public TJunction (FaceOrientation orientation) {
         this.orientation = orientation;

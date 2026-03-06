@@ -150,16 +150,16 @@ public class LightSource extends DynamicGridObject {
         if (dgo == null) return true;
 
         // Exit cannot be blocked by another light source
-        if (dgo.getClass() == LightSource.class) return false; 
+        if (dgo instanceof LightSource) return false; 
 
         // Exit cannot be blocked by a shifter that points into the light source.
-        if (dgo.getClass() == ColourShifter.class 
+        if (dgo instanceof ColourShifter 
                 && ((ColourShifter) dgo).orientation == getOppositeOrientation(this.orientation)) return false;
         
         // Exit cannot be blocked by prism of improper orientation
-        if (dgo.getClass() == Prism.class && ((Prism) dgo).orientation != this.orientation) return false;
+        if (dgo instanceof Prism && ((Prism) dgo).orientation != this.orientation) return false;
 
-        // Should not reach this case
-        return false;
+        // if its other dgo, it's fine. This would be a filter, based on the placement order
+        return true;
     }
 }

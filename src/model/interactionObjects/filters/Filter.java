@@ -87,7 +87,7 @@ public abstract class Filter extends DynamicGridObject {
         if (grid[spotX][spotY].cellStaticItem == WALL) return true;
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
         // Occlussion by another filter happens if it of a different colour
-        if (dgo != null && dgo.getClass() == Filter.class) {
+        if (dgo != null && dgo instanceof Filter) {
             return ((Filter) dgo).colour != this.colour;
         } else {
             return false;
@@ -96,7 +96,7 @@ public abstract class Filter extends DynamicGridObject {
 
     private boolean isOnWrongSideOfPrism(GridCell[][] grid, int spotX, int spotY, FaceOrientation filterSide) {
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
-        if (dgo != null && dgo.getClass() == Prism.class) {
+        if (dgo != null && dgo instanceof Prism) {
             switch (filterSide) {
                 // Above the filter
                 case UP:
