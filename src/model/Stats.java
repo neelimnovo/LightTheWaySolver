@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 
 public class Stats {
@@ -20,7 +21,7 @@ public class Stats {
     @Expose
     public long totalTime;
     @Expose
-    public long totalPermutations;
+    public BigInteger totalPermutations;
     @Expose
     public long attemptPermutations;
     @Expose
@@ -36,7 +37,7 @@ public class Stats {
         return totalTime / 1000;
     }
 
-    public long getTotalPermutations() {
+    public BigInteger getTotalPermutations() {
         return totalPermutations;
     }
 
@@ -48,7 +49,7 @@ public class Stats {
         return permutationRatio;
     }
 
-    public Stats(GridCell[][] grid, long time, long total, long attempted) {
+    public Stats(GridCell[][] grid, long time, BigInteger total, long attempted) {
         this.solutionGrid = grid;
         this.totalTime = time;
         this.totalPermutations = total;
@@ -58,11 +59,11 @@ public class Stats {
 
     // EFFECTS: Sets up the attempted permutation ratio that is displayed after solving a level
     private void setupPermutationRatio() {
-        double ratio = ((double)this.attemptPermutations/ (double)this.totalPermutations) * 100;
-        BigDecimal bigDecimalRatio = new BigDecimal(ratio);
-        bigDecimalRatio = bigDecimalRatio.round(new MathContext(4));
-        double rounded = bigDecimalRatio.doubleValue();
-        this.permutationRatio = rounded;
+        BigDecimal attempted = BigDecimal.valueOf(this.attemptPermutations);
+        BigDecimal total = new BigDecimal(this.totalPermutations);
+        BigDecimal ratio = attempted.divide(total, 10, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100));
+        ratio = ratio.round(new MathContext(4));
+        this.permutationRatio = ratio.doubleValue();
     }
 
     public void load(String fileName) {

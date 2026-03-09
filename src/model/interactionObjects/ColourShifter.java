@@ -15,8 +15,8 @@ import static model.interactionObjects.StaticGridObject.WALL;
 
 
 public class ColourShifter extends DynamicGridObject {
-    final FaceOrientation orientation;
-    final Colour colour;
+    public final FaceOrientation orientation;
+    public final Colour colour;
 
     public ColourShifter(FaceOrientation orientation, Colour colour) {
         this.orientation = orientation;

@@ -47,3 +47,11 @@ tasks.withType(JavaCompile) {
     options.debug = true
     options.compilerArgs << '-g'
 }
+
+// Run the headless level solver test via CLI
+// Usage: gradle runTest -PlevelName="Level 015.json"
+task runTest(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tests.levelTest'
+    args = project.hasProperty('levelName') ? [project.property('levelName')] : []
+}

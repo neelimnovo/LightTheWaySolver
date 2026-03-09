@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.ArrayDeque;
+import java.math.BigInteger;
 
 import static model.interactionObjects.StaticGridObject.*;
 import static model.interactionObjects.Colour.*;
@@ -35,7 +36,7 @@ public class LevelSolver {
 
     public double permutationRatio;
     public long attemptPermutations = 0;
-    public long totalPermutations;
+    public BigInteger totalPermutations;
 
     /**
      * Solve level
@@ -47,9 +48,8 @@ public class LevelSolver {
      *         Interact with Light
      *         Increment Light
      *     Receivers are powered
-     *  
+     * 
      */
-    public long timeSpentFilteringForDGO = 0;
     public long timeSpentProjectingLight = 0;
     public long timeSpentEmittingLight = 0;
     public long timeSpentSpreadingLight = 0;
@@ -75,24 +75,46 @@ public class LevelSolver {
         System.out.println("Total permutations: " + totalPermutations);
     }
 
-    private long createStatsHelper(long emptySpots, long dynamicObjects) {
+    private BigInteger createStatsHelper(long emptySpots, long dynamicObjects) {
         if (dynamicObjects == 0) {
-            return 1;
+            return BigInteger.ONE;
         } else {
-            return emptySpots * createStatsHelper(--emptySpots, --dynamicObjects);
+            return BigInteger.valueOf(emptySpots).multiply(createStatsHelper(--emptySpots, --dynamicObjects));
         }
     }
 
     // EFFECTS: "Efficiently" iterates through all possible placement permutations to find a solution grid
+    // iterationSpotIndex: for symmetry breaking — when placing an identical DGO to the previous one,
+    // only consider spots at indices >= iterationSpotIndex to avoid redundant permutations
     public boolean solveLevelOriginal(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots,
-                              LinkedList<DynamicGridObject> dgoQueue) {
+                              LinkedList<DynamicGridObject> dgoQueue, int iterationSpotIndex) {
         if (!dgoQueue.isEmpty()) {
-            long dgoTime = System.currentTimeMillis();
             DynamicGridObject dgo = dgoQueue.remove();
             ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
-            dgoTime = System.currentTimeMillis() - dgoTime;
-            timeSpentFilteringForDGO += dgoTime;
-            for (Pair<Integer, Integer> spot : filteredEmptySpots) {
+
+            int filteredSpotsStartIndex = 0;
+            // Symmetry breaking: skip spots before iterationSpotIndex
+            // iterationSpotIndex > 0 means the previous DGO was identical and placed at that index in the emptySpots list
+            if (iterationSpotIndex > 0) {
+                for (int i = 0; i < filteredEmptySpots.size(); i++) {
+                    // Find the first filtered, empty spot that is past or equal to the iterationSpotIndex in the global, master emptySpots list
+                    // We want to start iterating from there, as prior iterations have been attempted
+                    // This works because filteredEmptySpots are somewhat equivalent for the same DGOs
+                    if (emptySpotIndex(filteredEmptySpots.get(i)) >= iterationSpotIndex) {
+                        filteredSpotsStartIndex = i;
+                        break;
+                    }
+                    // If we reach the end without finding a valid index, no further spots are valid
+                    if (i == filteredEmptySpots.size() - 1) {
+                        // backtrack
+                        dgoQueue.addFirst(dgo);
+                        return false;
+                    }
+                }
+            }
+
+            for (int i = filteredSpotsStartIndex; i < filteredEmptySpots.size(); i++) {
+                Pair<Integer, Integer> spot = filteredEmptySpots.get(i);
                 int spotX = spot.getKey();
                 int spotY = spot.getValue();
                 GridCell cell = grid[spotX][spotY];
@@ -100,7 +122,17 @@ public class LevelSolver {
                     trackLightSources(dgo, spotX, spotY);
                     cell.cellDynamicItem = dgo;
 
-                    boolean isSolutionFound = solveLevelOriginal(grid, this.emptySpots, dgoQueue);
+                    int nextIterationSpotIndex = 0;
+                    // If a subsequent DGO exists and the current.DGO is the same as the next.DGO
+                    if (!dgoQueue.isEmpty() && areIdenticalDGOs(dgo, dgoQueue.peek())) {
+                        // The interchanged positions of these two DGOs are functionally equivalent
+                        // So when the next.DGO is placed, it can skip the permutation where it is placed at current.DGO spot
+                        // Hence, get the index of the current.DGO spot from the emptySpots list
+                        // and provide it to the next recursive call
+                        nextIterationSpotIndex = emptySpotIndex(spot) + 1;
+                    }
+
+                    boolean isSolutionFound = solveLevelOriginal(grid, this.emptySpots, dgoQueue, nextIterationSpotIndex);
                     if (isSolutionFound) {
                         return true;
                     }
@@ -118,6 +150,52 @@ public class LevelSolver {
             return projectLight(grid);
         }
         return false;        
+    }
+
+    // EFFECTS: Returns the index of the given spot in the global emptySpots list, which is the same for all DGOs
+    // This provides a canonical ordering for symmetry breaking.
+    private int emptySpotIndex(Pair<Integer, Integer> spot) {
+        int sx = spot.getKey();
+        int sy = spot.getValue();
+        for (int i = 0; i < emptySpots.size(); i++) {
+            Pair<Integer, Integer> es = emptySpots.get(i);
+            if (es.getKey() == sx && es.getValue() == sy) {
+                return i;
+            }
+        }
+        return -1; // Should never happen
+    }
+
+    // EFFECTS: Checks if two DynamicGridObjects are functionally identical
+    // (same class and same properties), meaning their placements are interchangeable
+    private static boolean areIdenticalDGOs(DynamicGridObject a, DynamicGridObject b) {
+        if (a.getClass() != b.getClass()) return false;
+
+        // No orienation or colour differentiation for BackwardMirror and ForwardMirror
+        if (a instanceof BackwardMirror || a instanceof ForwardMirror) return true;
+
+        // LightSource: identical if same orientation
+        if (a instanceof LightSource) {
+            return ((LightSource) a).orientation == ((LightSource) b).orientation;
+        }
+        // Prism: identical if same orientation
+        if (a instanceof Prism) {
+            return ((Prism) a).orientation == ((Prism) b).orientation;
+        }
+        // TJunction: identical if same orientation
+        if (a instanceof TJunction) {
+            return ((TJunction) a).orientation == ((TJunction) b).orientation;
+        }
+        // ColourShifter: identical if same orientation and colour
+        if (a instanceof ColourShifter) {
+            ColourShifter csA = (ColourShifter) a;
+            ColourShifter csB = (ColourShifter) b;
+            return csA.orientation == csB.orientation && csA.colour == csB.colour;
+        }
+        // Filters: identical if same colour
+        if (a instanceof Filter) return ((Filter) a).colour == ((Filter) b).colour;
+
+        return false;
     }
 
 
@@ -140,7 +218,6 @@ public class LevelSolver {
         if (allReceiversArePowered(receiverSpots, grid)) {
             timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
 
-            System.out.println("Time spent filtering for DGO: " + timeSpentFilteringForDGO);
             System.out.println("Time spent projecting light: " + timeSpentProjectingLight);
             System.out.println("Time spent emitting light: " + timeSpentEmittingLight);
             System.out.println("Time spent spreading light: " + timeSpentSpreadingLight);
@@ -162,7 +239,6 @@ public class LevelSolver {
     }
 
     private boolean allReceiversArePowered(ArrayList<Pair<Integer, Integer>> receiverSpots, GridCell[][] grid) {
-        long checkTime = System.currentTimeMillis();
         for(Pair<Integer, Integer> spot : receiverSpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
@@ -174,7 +250,6 @@ public class LevelSolver {
         System.out.println("Number of attempts: " + attemptPermutations);
         this.solutionGrid = grid;
         System.out.println("Found solution!");
-        timeSpentCheckingReceiversPowered += System.currentTimeMillis() - checkTime;
         return true;
     }
 

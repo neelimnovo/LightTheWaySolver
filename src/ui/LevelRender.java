@@ -118,7 +118,7 @@ public class LevelRender {
             gridLayout.gridCellArray.length, gridLayout.gridCellArray[0].length);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
         long startTime = System.currentTimeMillis();
-        solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue);
+        solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue, 0);
         if (solver.solutionGrid != null) {
             totalTime = (System.currentTimeMillis() - startTime);
             statistics = new Stats(solver.solutionGrid, totalTime, solver.totalPermutations,

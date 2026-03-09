@@ -22,6 +22,8 @@ The solution and solving statistics to each level can also be saved and displaye
 
 The wiki explains the approach taken for solving the levels in the game. No copyright infrigement is intended, the app was made simply for a learning experience.
 
+# Prerequisites to run
+
 # Instructions to run
 
 To build project, run
