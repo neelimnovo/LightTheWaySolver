@@ -5,7 +5,7 @@ import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.FaceOrientation.*;
@@ -118,56 +118,56 @@ public class Prism extends DynamicGridObject {
 
     @Override
     // EFFECTS: Takes in white light and emits red, blue and yellow light along sides
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
-        if (light.colour == WHITE && this.orientation == light.orientation) {
-            Light prismRedLight = null;
-            Light prismBlueLight = null;
-            Light prismYellowLight = null;
-            int xPos = light.xPos;
-            int yPos = light.yPos;
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
+        if (Light.getColour(light) == WHITE && this.orientation == Light.getOrientation(light)) {
+            short prismRedLight = -1;
+            short prismBlueLight = -1;
+            short prismYellowLight = -1;
+            int xPos = Light.getX(light);
+            int yPos = Light.getY(light);
             int upPos = yPos - 1;
             int downPos = yPos + 1;
             int leftPos = xPos - 1;
             int rightPos = xPos + 1;
             switch (this.orientation) {
                 case UP:
-                    prismRedLight = new Light(RED, UP, xPos, upPos);
+                    prismRedLight = Light.create(xPos, upPos, RED, UP);
                     grid[xPos][upPos].light = prismRedLight;
 
-                    prismBlueLight = new Light(BLUE, LEFT, leftPos, yPos);
+                    prismBlueLight = Light.create(leftPos, yPos, BLUE, LEFT);
                     grid[leftPos][yPos].light = prismBlueLight;
 
-                    prismYellowLight = new Light(YELLOW, RIGHT, rightPos, yPos);
+                    prismYellowLight = Light.create(rightPos, yPos, YELLOW, RIGHT);
                     grid[rightPos][yPos].light = prismYellowLight;
                     break;
                 case DOWN:
-                    prismRedLight = new Light(RED, DOWN, xPos, downPos);
+                    prismRedLight = Light.create(xPos, downPos, RED, DOWN);
                     grid[xPos][downPos].light = prismRedLight;
 
-                    prismBlueLight = new Light(BLUE, RIGHT, rightPos, yPos);
+                    prismBlueLight = Light.create(rightPos, yPos, BLUE, RIGHT);
                     grid[rightPos][yPos].light = prismBlueLight;
 
-                    prismYellowLight = new Light(YELLOW, LEFT, leftPos, yPos);
+                    prismYellowLight = Light.create(leftPos, yPos, YELLOW, LEFT);
                     grid[leftPos][yPos].light = prismYellowLight;
                     break;
                 case LEFT:
-                    prismRedLight = new Light(RED, LEFT, leftPos, yPos);
+                    prismRedLight = Light.create(leftPos, yPos, RED, LEFT);
                     grid[leftPos][yPos].light = prismRedLight;
 
-                    prismBlueLight = new Light(BLUE, DOWN, xPos, downPos);
+                    prismBlueLight = Light.create(xPos, downPos, BLUE, DOWN);
                     grid[xPos][downPos].light = prismBlueLight;
 
-                    prismYellowLight = new Light(YELLOW, UP, xPos, upPos);
+                    prismYellowLight = Light.create(xPos, upPos, YELLOW, UP);
                     grid[xPos][upPos].light = prismYellowLight;
                     break;
                 case RIGHT:
-                    prismRedLight = new Light(RED, RIGHT, rightPos, yPos);
+                    prismRedLight = Light.create(rightPos, yPos, RED, RIGHT);
                     grid[rightPos][yPos].light = prismRedLight;
 
-                    prismBlueLight = new Light(BLUE, UP, xPos, upPos);
+                    prismBlueLight = Light.create(xPos, upPos, BLUE, UP);
                     grid[xPos][upPos].light = prismBlueLight;
 
-                    prismYellowLight = new Light(YELLOW, DOWN, xPos, downPos);
+                    prismYellowLight = Light.create(xPos, downPos, YELLOW, DOWN);
                     grid[xPos][downPos].light = prismYellowLight;
                     break;
             }            

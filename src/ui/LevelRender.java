@@ -124,6 +124,7 @@ public class LevelRender {
             statistics = new Stats(solver.solutionGrid, totalTime, solver.totalPermutations,
                     solver.attemptPermutations);
             renderSolvedGrid(renderedGrid, solver.solutionGrid);
+            
         } else {
             statistics = null;
             System.out.println("!!! No solution found for level !!!");
@@ -214,9 +215,9 @@ public class LevelRender {
                                 readResourceImage(gridCellArray[x][y]
                                         .cellDynamicItem.getCorrectImageString()));
                     } else {
-                        Light labelLight = gridCellArray[x][y].light;
-                        if (labelLight != null) {
-                            gridNode = new Label("", readResourceImage(labelLight.getCorrectLightString()));
+                        short labelLight = gridCellArray[x][y].light;
+                        if (labelLight != -1) {
+                            gridNode = new Label("", readResourceImage(Light.getCorrectLightString(labelLight)));
                         } else {
                             gridNode = new Label("", readResourceImage(getCorrectImageString(EMPTY)));
                         }

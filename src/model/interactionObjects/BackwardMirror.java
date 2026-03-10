@@ -5,7 +5,7 @@ import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.EMPTY;
@@ -102,20 +102,20 @@ public class BackwardMirror extends DynamicGridObject {
 
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
-        int x = light.xPos, y = light.yPos;
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
+        int x = Light.getX(light), y = Light.getY(light);
         int newX = x, newY = y;
         FaceOrientation newLightOrientation;
-        switch (light.orientation) {
+        switch (Light.getOrientation(light)) {
             case UP:    newX = x - 1; newLightOrientation = LEFT; break;
             case DOWN:  newX = x + 1; newLightOrientation = RIGHT; break;
             case LEFT:  newY = y - 1; newLightOrientation = UP; break;
             case RIGHT: newY = y + 1; newLightOrientation = DOWN; break;
             default:
-                throw new IllegalStateException("Unexpected value: " + light.orientation);
+                throw new IllegalStateException("Unexpected value: " + Light.getOrientation(light));
         }
         if (GridLayout.isWithinBounds(grid, newX, newY)) {
-            Light interactedLight = new Light(light.colour, newLightOrientation, newX, newY);
+            short interactedLight = Light.create(newX, newY, Light.getColour(light), newLightOrientation);
             grid[newX][newY].light = interactedLight;
             lightProcessingQueue.add(interactedLight);
         }

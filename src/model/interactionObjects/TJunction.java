@@ -5,7 +5,7 @@ import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.*;
@@ -268,10 +268,10 @@ public class TJunction extends DynamicGridObject {
 
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
-        if (this.orientation == light.orientation) {
-            int x1 = light.xPos;
-            int y1 = light.yPos;
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
+        if (this.orientation == Light.getOrientation(light)) {
+            int x1 = Light.getX(light);
+            int y1 = Light.getY(light);
             int x2 = x1;
             int y2 = y1;
             FaceOrientation l1 = null;
@@ -295,12 +295,12 @@ public class TJunction extends DynamicGridObject {
                     break;
             }
             if (GridLayout.isWithinBounds(grid, x1, y1)) {
-                Light light1 = new Light(light.colour, l1, x1, y1);
+                short light1 = Light.create(x1, y1, Light.getColour(light), l1);
                 grid[x1][y1].light = light1;
                 lightProcessingQueue.add(light1);
             }
             if (GridLayout.isWithinBounds(grid, x2, y2)) {
-                Light light2 = new Light(light.colour, l2, x2, y2);
+                short light2 = Light.create(x2, y2, Light.getColour(light), l2);
                 grid[x2][y2].light = light2;
                 lightProcessingQueue.add(light2);
             }

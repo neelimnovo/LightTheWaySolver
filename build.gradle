@@ -55,3 +55,8 @@ task runTest(type: JavaExec) {
     mainClass = 'tests.levelTest'
     args = project.hasProperty('levelName') ? [project.property('levelName')] : []
 }
+
+task debugRun(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tests.DebugRun'
+}

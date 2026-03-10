@@ -13,13 +13,19 @@ public class GridCell {
     public StaticGridObject cellStaticItem;
     public DynamicGridObject cellDynamicItem;
     public Receiver receiver;
-    public Light light;
+    public short light = -1;
+
+    // Need a no-arg constructor to default the light value to -1
+    // Otherwise the Gson serialization library sets this as 0
+    public GridCell() {
+        this.light = -1;
+    }
 
     public GridCell(StaticGridObject cellItem) {
         this.cellStaticItem = cellItem;
     }
 
-    public GridCell(StaticGridObject sgo, DynamicGridObject dgo, Receiver receiver, Light light) {
+    public GridCell(StaticGridObject sgo, DynamicGridObject dgo, Receiver receiver, short light) {
         this.cellStaticItem = sgo;
         this.cellDynamicItem = dgo;
         this.receiver = receiver;
@@ -84,8 +90,19 @@ public class GridCell {
                     if (this.cellDynamicItem instanceof TJunction) {
                         return "\u001B[35m[tJ]\u001B[0m";
                     }
-                } else if (this.light != null) {
-                    return "[Li]";
+                } else if (this.light != -1) {
+                    switch (Light.getColour(this.light)) {
+                        case WHITE:
+                            return "\u001B[107m[wL]\u001B[0m";
+                        case RED:
+                            return "\u001B[101m[rL]\u001B[0m";
+                        case BLUE:
+                            return "\u001B[104m[bL]\u001B[0m";
+                        case YELLOW:
+                            return "\u001B[103m[yL]\u001B[0m";
+                        default:
+                            return "[Li]";
+                    }
                 } else {
                     return "[  ]";
                 }

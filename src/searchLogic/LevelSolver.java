@@ -9,7 +9,7 @@ import model.interactionObjects.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 import java.math.BigInteger;
 
 import static model.interactionObjects.StaticGridObject.*;
@@ -30,7 +30,12 @@ public class LevelSolver {
 
     // Initialised in the solveLevel method
     HashMap<LightSource, Pair<Integer, Integer>> sourceSpots;
-    ArrayDeque<Light> lightProcessingQueue;
+    ShortQueue lightProcessingQueue;
+    
+    // Arrays for tracking which coordinates are lit, for fast O(L) resetting of the grid
+    int[] litSpotX = new int[20];
+    int[] litSpotY = new int[20];
+    int litCount = 0;
     
     public GridCell[][] solutionGrid;
 
@@ -61,7 +66,7 @@ public class LevelSolver {
     public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots, ArrayList<Pair<Integer, Integer>> emptySpots,
                         int gridWidth, int gridHeight) {
         this.receiverSpots = receiverSpots;
-        lightProcessingQueue = new ArrayDeque<>();
+        lightProcessingQueue = new ShortQueue(gridWidth * gridHeight);
         sourceSpots = new HashMap<>();
         this.emptySpots = emptySpots;
         this.gridWidth = gridWidth;
@@ -208,7 +213,20 @@ public class LevelSolver {
         emitTime = System.currentTimeMillis() - emitTime;
         timeSpentEmittingLight += emitTime;
         while (!lightProcessingQueue.isEmpty()) {
-            Light light = lightProcessingQueue.remove();
+            short light = lightProcessingQueue.remove();
+            
+            if (litCount >= litSpotX.length) {
+                int[] nX = new int[litSpotX.length * 2];
+                int[] nY = new int[litSpotY.length * 2];
+                System.arraycopy(litSpotX, 0, nX, 0, litSpotX.length);
+                System.arraycopy(litSpotY, 0, nY, 0, litSpotY.length);
+                litSpotX = nX;
+                litSpotY = nY;
+            }
+            litSpotX[litCount] = Light.getX(light);
+            litSpotY[litCount] = Light.getY(light);
+            litCount++;
+
             long spreadTime = System.currentTimeMillis();
             spreadLight(light, grid);
             spreadTime = System.currentTimeMillis() - spreadTime;
@@ -232,13 +250,21 @@ public class LevelSolver {
                 int spotY = spot.getValue();
                 grid[spotX][spotY].receiver.isPowered = false;
             }
-            GridLayout.resetLightInGridCellArray(grid);
+            
+            // Fast clear lights without iterating the whole grid
+            for (int i = 0; i < litCount; i++) {
+                grid[litSpotX[i]][litSpotY[i]].light = -1;
+            }
+            litCount = 0;
+            // GridLayout.resetLightInGridCellArray(grid);
+
             timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
             return false;
         }
     }
 
     private boolean allReceiversArePowered(ArrayList<Pair<Integer, Integer>> receiverSpots, GridCell[][] grid) {
+        long checkTime = System.currentTimeMillis();
         for(Pair<Integer, Integer> spot : receiverSpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
@@ -258,9 +284,9 @@ public class LevelSolver {
     // 2) If the current gridCell is void space, increments light in the appropriate direction
     // 3) If the current gridCell is a wall, stops the spread of light by doing nothing
     // 4) If the current gridCell is a receiver, attempt to power it up with the light
-    private void spreadLight(Light light, GridCell[][] grid) {
-        int x = light.xPos;
-        int y = light.yPos;
+    private void spreadLight(short light, GridCell[][] grid) {
+        int x = Light.getX(light);
+        int y = Light.getY(light);
         StaticGridObject sgo = grid[x][y].cellStaticItem;
         if (sgo == EMPTY) {
             DynamicGridObject dgo = grid[x][y].cellDynamicItem;
@@ -291,7 +317,7 @@ public class LevelSolver {
             int ord = lightSource.orientation.ordinal();
             int newX = spotX + DX[ord];
             int newY = spotY + DY[ord];
-            Light startingLight = new Light(WHITE, lightSource.orientation, newX, newY);
+            short startingLight = Light.create(newX, newY, WHITE, lightSource.orientation);
             grid[newX][newY].light = startingLight;
             lightProcessingQueue.add(startingLight);
         }
@@ -308,13 +334,13 @@ public class LevelSolver {
     // EFFECTS: Increments the light one grid cell at a time if it is possible to do so
     // in the original direction of the light
     // Skips increment if it hits a wall, or goes out of bounds
-    private void incrementLight(Light light, GridCell[][] grid) {
+    private void incrementLight(short light, GridCell[][] grid) {
         long incrementTime = System.currentTimeMillis();
-        int ord = light.orientation.ordinal();
-        int nx = light.xPos + DX[ord];
-        int ny = light.yPos + DY[ord];
+        int ord = Light.getOrientation(light).ordinal();
+        int nx = Light.getX(light) + DX[ord];
+        int ny = Light.getY(light) + DY[ord];
         if (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
-            Light incrementedLight = new Light(light.colour, light.orientation, nx, ny);
+            short incrementedLight = Light.create(nx, ny, Light.getColour(light), Light.getOrientation(light));
             grid[nx][ny].light = incrementedLight;
             lightProcessingQueue.add(incrementedLight);
         }

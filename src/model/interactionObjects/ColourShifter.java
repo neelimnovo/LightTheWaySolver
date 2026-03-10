@@ -8,7 +8,7 @@ import model.interactionObjects.filters.RedFilter;
 import model.interactionObjects.filters.YellowFilter;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.StaticGridObject.WALL;
@@ -152,8 +152,8 @@ public class ColourShifter extends DynamicGridObject {
     }
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
-        int x = light.xPos, y = light.yPos;
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
+        int x = Light.getX(light), y = Light.getY(light);
         int nx = x, ny = y;
         switch (this.orientation) {
             case UP:    ny = y - 1; break;
@@ -163,7 +163,7 @@ public class ColourShifter extends DynamicGridObject {
             default: throw new IllegalStateException("Unexpected value: " + this.orientation);
         }
         if (GridLayout.isWithinBounds(grid, nx, ny)) {
-            Light interactedLight = new Light(this.colour, this.orientation, nx, ny);
+            short interactedLight = Light.create(nx, ny, this.colour, this.orientation);
             grid[nx][ny].light = interactedLight;
             lightProcessingQueue.add(interactedLight);
         }

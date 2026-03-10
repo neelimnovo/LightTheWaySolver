@@ -8,3 +8,4 @@ lib/
 .github/
 
 test*.*
+run.bat

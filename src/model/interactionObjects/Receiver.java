@@ -11,8 +11,8 @@ public class Receiver {
         isPowered = false;
     }
 
-    public void powerUp(Light light) {
-        if (light.colour == this.colour) {
+    public void powerUp(short light) {
+        if (Light.getColour(light) == this.colour) {
             isPowered = true;
         }
     }

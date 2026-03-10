@@ -44,10 +44,10 @@ TODO
     * back Mirrors (maybe bugged)
     * shifters
 
-* Fix total permutations overflow with level 24
 * After beating a record, saving level solution saves solving time as zero seconds
-* What is the longest step of testing one iteration?
 * optimize isUnblockedMirrorSpot
+* Fix bug with leftover light in a level
+* Profile sub 10 second level with visualVM
 
 
 # L23
@@ -75,18 +75,30 @@ Time spent projecting light: 8152
 Time spent checking receivers powered: 344
 
 # L20
-
-Time spent projecting light: 72774
-Time spent emitting light: 28915
-Time spent spreading light: 32400
-Time spent incrementing light: 22978
-Time spent checking receivers powered: 2290
-
 Time spent projecting light: 71769
 Time spent emitting light: 26482
 Time spent spreading light: 33213
 Time spent incrementing light: 23505
 Time spent checking receivers powered: 2382
+
+Time spent projecting light: 29659
+Time spent emitting light: 8441
+Time spent spreading light: 15757
+Time spent incrementing light: 10706
+Time spent checking receivers powered: 1889
+
+# L24
+Time spent projecting light: 4808
+Time spent emitting light: 1978
+Time spent spreading light: 2156
+Time spent incrementing light: 1404
+Time spent checking receivers powered: 435
+
+Time spent projecting light: 5489
+Time spent emitting light: 1841
+Time spent spreading light: 2195
+Time spent incrementing light: 1492
+Time spent checking receivers powered: 509
 
 # L13
 Number of DynamicObjects: 5

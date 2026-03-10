@@ -73,7 +73,7 @@ public class GridLayout {
                 copyGrid[x][y] = new GridCell(grid[x][y].cellStaticItem,
                         null, // reset dynamic objects
                         grid[x][y].receiver,
-                        null); // reset light
+                        (short) -1); // reset light
             }
         }
         return copyGrid;
@@ -82,7 +82,7 @@ public class GridLayout {
     public static void resetLightInGridCellArray (GridCell[][] grid) {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
-                grid[x][y].light = null;
+                grid[x][y].light = -1;
             }
         }
     }

@@ -5,7 +5,7 @@ import model.GridCell;
 import model.GridLayout;
 import searchLogic.Light;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.FaceOrientation.*;
 import static model.interactionObjects.StaticGridObject.*;
@@ -127,7 +127,7 @@ public class LightSource extends DynamicGridObject {
     }
 
     @Override
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
         // System.out.println("Blocks light, so does nothing with the lightProcessingQueue");
     }
 

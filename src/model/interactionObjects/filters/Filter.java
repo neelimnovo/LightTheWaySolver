@@ -7,7 +7,7 @@ import model.interactionObjects.*;
 import searchLogic.Light;
 
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import searchLogic.ShortQueue;
 
 import static model.interactionObjects.Colour.*;
 import static model.interactionObjects.FaceOrientation.*;
@@ -156,11 +156,11 @@ public abstract class Filter extends DynamicGridObject {
         return receiver == null || receiver.colour == this.colour;
     }
 
-    public void interactWithLight(Light light, GridCell[][] grid, ArrayDeque<Light> lightProcessingQueue) {
+    public void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue) {
         // Only interact with the light if the light is of the same colour or white
-        if (light.colour == WHITE || light.colour == this.colour) {
-            int x = light.xPos, y = light.yPos;
-            FaceOrientation orientation = light.orientation;
+        if (Light.getColour(light) == WHITE || Light.getColour(light) == this.colour) {
+            int x = Light.getX(light), y = Light.getY(light);
+            FaceOrientation orientation = Light.getOrientation(light);
             int newX = x, newY = y;
             switch (orientation) {
                 case UP:    newY = y - 1; break;
@@ -169,7 +169,7 @@ public abstract class Filter extends DynamicGridObject {
                 case RIGHT: newX = x + 1; break;
             }
             if (GridLayout.isWithinBounds(grid, newX, newY)) {
-                Light interactedLight = new Light(this.colour, orientation, newX, newY);
+                short interactedLight = Light.create(newX, newY, this.colour, orientation);
                 grid[newX][newY].light = interactedLight;
                 lightProcessingQueue.add(interactedLight);
             }
