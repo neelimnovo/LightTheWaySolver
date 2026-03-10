@@ -9,12 +9,10 @@ import model.interactionObjects.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import searchLogic.ShortQueue;
 import java.math.BigInteger;
 
 import static model.interactionObjects.StaticGridObject.*;
 import static model.interactionObjects.Colour.*;
-import static model.interactionObjects.FaceOrientation.*;
 
 public class LevelSolver {
     // Direction delta lookup tables indexed by FaceOrientation.ordinal()
