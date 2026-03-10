@@ -42,43 +42,35 @@ public class LightSource extends DynamicGridObject {
             int spotY = spot.getValue();
             switch (this.orientation) {
                 case UP:
-                    if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
-                        if (isValidExit(grid, spotX, spotY - 1)
+                    if (isValidExit(grid, spotX, spotY - 1)
                         && isValidNeighbour(grid, spotX, spotY, DOWN)
                         && isValidNeighbour(grid, spotX, spotY, LEFT)
                         && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
                             resultSpots.add(new Pair<>(spotX, spotY));
-                        }
                     }
                     break;
                 case DOWN:
-                    if (GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
-                        if (isValidExit(grid, spotX, spotY + 1)
-                                && isValidNeighbour(grid, spotX, spotY, UP)
-                                && isValidNeighbour(grid, spotX, spotY, LEFT)
-                                && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
-                            resultSpots.add(new Pair<>(spotX, spotY));
-                        }
+                    if (isValidExit(grid, spotX, spotY + 1)
+                            && isValidNeighbour(grid, spotX, spotY, UP)
+                            && isValidNeighbour(grid, spotX, spotY, LEFT)
+                            && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
+                        resultSpots.add(new Pair<>(spotX, spotY));
                     }
                     break;
                 case LEFT:
-                    if (GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
-                        if (isValidExit(grid, spotX - 1, spotY)
-                                && isValidNeighbour(grid, spotX, spotY, UP)
-                                && isValidNeighbour(grid, spotX, spotY, DOWN)
-                                && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
-                            resultSpots.add(new Pair<>(spotX, spotY));
-                        }
+                    if (isValidExit(grid, spotX - 1, spotY)
+                            && isValidNeighbour(grid, spotX, spotY, UP)
+                            && isValidNeighbour(grid, spotX, spotY, DOWN)
+                            && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
+                        resultSpots.add(new Pair<>(spotX, spotY));
                     }
                     break;
                 case RIGHT:
-                    if (GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
-                        if (isValidExit(grid, spotX + 1, spotY)
-                                && isValidNeighbour(grid, spotX, spotY, UP)
-                                && isValidNeighbour(grid, spotX, spotY, DOWN)
-                                && isValidNeighbour(grid, spotX, spotY, LEFT)) {
-                            resultSpots.add(new Pair<>(spotX, spotY));
-                        }
+                    if (isValidExit(grid, spotX + 1, spotY)
+                            && isValidNeighbour(grid, spotX, spotY, UP)
+                            && isValidNeighbour(grid, spotX, spotY, DOWN)
+                            && isValidNeighbour(grid, spotX, spotY, LEFT)) {
+                        resultSpots.add(new Pair<>(spotX, spotY));
                     }
                     break;
             }
@@ -97,30 +89,14 @@ public class LightSource extends DynamicGridObject {
     private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
         switch (direction) {
             case UP:
-                if (!GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
-                    return true;
-                } else {
-                    // TODO should not be exiting light source, exiting shifter, prism or occlude a filter
-                    return grid[spotX][spotY - 1].receiver == null;
-                }
+                // TODO should not be exiting light source, exiting shifter, prism or occlude a filter
+                return grid[spotX][spotY - 1].receiver == null;
             case DOWN:
-                if (!GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
-                    return true;
-                } else {
-                    return grid[spotX][spotY + 1].receiver == null;
-                }
+                return grid[spotX][spotY + 1].receiver == null;
             case LEFT:
-                if (!GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
-                    return true;
-                } else {
-                    return grid[spotX - 1][spotY].receiver == null;
-                }
+                return grid[spotX - 1][spotY].receiver == null;
             case RIGHT:
-                if (!GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
-                    return true;
-                } else {
-                    return grid[spotX + 1][spotY].receiver == null;
-                }
+                return grid[spotX + 1][spotY].receiver == null;
             default:
                 throw new IllegalStateException("Unexpected value: " + direction);
         }

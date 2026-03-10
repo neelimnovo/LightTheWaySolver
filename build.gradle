@@ -28,7 +28,7 @@ dependencies {
     implementation 'org.openjfx:javafx-graphics:17'
     implementation 'org.openjfx:javafx-base:17'     
     implementation 'org.openjfx:javafx-swt:17'      
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
 
 }
 

@@ -90,11 +90,9 @@ public class ForwardMirror extends DynamicGridObject {
             default:
                 throw new IllegalStateException("Unexpected value: " + Light.getOrientation(light));
         }
-        if (GridLayout.isWithinBounds(grid, nx, ny)) {
-            short interactedLight = Light.create(nx, ny, Light.getColour(light), newOrientation);
-            grid[nx][ny].light = interactedLight;
-            lightProcessingQueue.add(interactedLight);
-        }
+        short interactedLight = Light.create(nx, ny, Light.getColour(light), newOrientation);
+        grid[nx][ny].light = interactedLight;
+        lightProcessingQueue.add(interactedLight);
     }
 
     @Override

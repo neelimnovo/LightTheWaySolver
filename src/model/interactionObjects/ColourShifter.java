@@ -85,26 +85,22 @@ public class ColourShifter extends DynamicGridObject {
     private boolean isValidExit(GridCell[][] grid, int spotX, int spotY) {
         switch (this.orientation) {
             case UP:
-                return GridLayout.isWithinBounds(grid, spotX, spotY - 1)
-                        && spotIsNotWall(grid, spotX, spotY - 1)
+                return spotIsNotWall(grid, spotX, spotY - 1)
                         && spotIsNotWrongReceiver(grid, spotX, spotY - 1)
                         && spotIsNotWrongFilterOrPrism(grid, spotX, spotY - 1)
                         && spotIsNotWrongColourShifter(grid, spotX, spotY - 1);
             case DOWN:
-                return GridLayout.isWithinBounds(grid, spotX, spotY + 1)
-                        && spotIsNotWall(grid, spotX, spotY + 1)
+                return spotIsNotWall(grid, spotX, spotY + 1)
                         && spotIsNotWrongReceiver(grid, spotX, spotY + 1)
                         && spotIsNotWrongFilterOrPrism(grid, spotX, spotY + 1)
                         && spotIsNotWrongColourShifter(grid, spotX, spotY + 1);
             case LEFT:
-                return GridLayout.isWithinBounds(grid, spotX - 1, spotY)
-                        && spotIsNotWall(grid, spotX - 1, spotY)
+                return spotIsNotWall(grid, spotX - 1, spotY)
                         && spotIsNotWrongReceiver(grid, spotX - 1, spotY)
                         && spotIsNotWrongFilterOrPrism(grid, spotX - 1, spotY)
                         && spotIsNotWrongColourShifter(grid, spotX - 1, spotY);
             case RIGHT:
-                return GridLayout.isWithinBounds(grid, spotX + 1, spotY)
-                        && spotIsNotWall(grid, spotX + 1, spotY)
+                return spotIsNotWall(grid, spotX + 1, spotY)
                         && spotIsNotWrongReceiver(grid, spotX + 1, spotY)
                         && spotIsNotWrongFilterOrPrism(grid, spotX + 1, spotY)
                         && spotIsNotWrongColourShifter(grid, spotX + 1, spotY);
@@ -162,11 +158,9 @@ public class ColourShifter extends DynamicGridObject {
             case RIGHT: nx = x + 1; break;
             default: throw new IllegalStateException("Unexpected value: " + this.orientation);
         }
-        if (GridLayout.isWithinBounds(grid, nx, ny)) {
-            short interactedLight = Light.create(nx, ny, this.colour, this.orientation);
-            grid[nx][ny].light = interactedLight;
-            lightProcessingQueue.add(interactedLight);
-        }
+        short interactedLight = Light.create(nx, ny, this.colour, this.orientation);
+        grid[nx][ny].light = interactedLight;
+        lightProcessingQueue.add(interactedLight);
     }
 
     @Override

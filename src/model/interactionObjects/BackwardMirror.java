@@ -25,6 +25,7 @@ public class BackwardMirror extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
+            // TODO should return early if it becomes invalid, TB and LR invalid case
             boolean topValid = isUnblockedMirrorSpot(grid, spotX, spotY - 1, UP);
             boolean downValid = isUnblockedMirrorSpot(grid, spotX, spotY + 1, DOWN);
             boolean leftValid = isUnblockedMirrorSpot(grid, spotX - 1, spotY, LEFT);
@@ -69,7 +70,6 @@ public class BackwardMirror extends DynamicGridObject {
      * Return false if the neighbouring spot is blocked, and hence one side of the mirror would be blocked
      */
     static boolean isUnblockedMirrorSpot(GridCell[][] grid, int spotX, int spotY, FaceOrientation orientation) {
-        if (!GridLayout.isWithinBounds(grid, spotX, spotY)) return false;
         if (grid[spotX][spotY].cellStaticItem == WALL) return false;
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
         if (dgo == null) return true;
@@ -114,11 +114,9 @@ public class BackwardMirror extends DynamicGridObject {
             default:
                 throw new IllegalStateException("Unexpected value: " + Light.getOrientation(light));
         }
-        if (GridLayout.isWithinBounds(grid, newX, newY)) {
-            short interactedLight = Light.create(newX, newY, Light.getColour(light), newLightOrientation);
-            grid[newX][newY].light = interactedLight;
-            lightProcessingQueue.add(interactedLight);
-        }
+        short interactedLight = Light.create(newX, newY, Light.getColour(light), newLightOrientation);
+        grid[newX][newY].light = interactedLight;
+        lightProcessingQueue.add(interactedLight);
     }
 
     @Override

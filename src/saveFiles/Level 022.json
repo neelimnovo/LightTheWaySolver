@@ -29,6 +29,9 @@
                 },
                 {
                     "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
                 }
             ],
             [
@@ -46,90 +49,6 @@
                 },
                 {
                     "cellStaticItem": "WALL"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                }
-            ],
-            [
-                {
-                    "cellStaticItem": "WALL"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                }
-            ],
-            [
-                {
-                    "cellStaticItem": "RED_RECEIVER"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                }
-            ],
-            [
-                {
-                    "cellStaticItem": "WALL"
-                },
-                {
-                    "cellStaticItem": "WALL"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
                 },
                 {
                     "cellStaticItem": "EMPTY"
@@ -156,32 +75,6 @@
                 },
                 {
                     "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                },
-                {
-                    "cellStaticItem": "EMPTY"
-                }
-            ],
-            [
-                {
-                    "cellStaticItem": "WALL"
-                },
-                {
-                    "cellStaticItem": "WALL"
                 },
                 {
                     "cellStaticItem": "EMPTY"
@@ -232,6 +125,137 @@
                 },
                 {
                     "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                },
+                {
+                    "cellStaticItem": "WALL"
+                }
+            ],
+            [
+                {
+                    "cellStaticItem": "RED_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
                 }
             ],
             [
@@ -261,6 +285,9 @@
                 },
                 {
                     "cellStaticItem": "EMPTY"
+                },
+                {
+                    "cellStaticItem": "WALL"
                 }
             ],
             [
@@ -281,6 +308,9 @@
                 },
                 {
                     "cellStaticItem": "YELLOW_RECEIVER"
+                },
+                {
+                    "cellStaticItem": "WALL"
                 },
                 {
                     "cellStaticItem": "WALL"
@@ -293,7 +323,11 @@
                 }
             ]
         ],
-        "lights": [{"orientation":"DOWN"}],
+        "lights": [
+            {
+                "orientation": "DOWN"
+            }
+        ],
         "blueFilters": [],
         "redFilters": [],
         "yellowFilters": [],

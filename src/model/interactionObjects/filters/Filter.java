@@ -36,7 +36,7 @@ public abstract class Filter extends DynamicGridObject {
             boolean rightOccluded = false;
 
             // Check UP
-            if (GridLayout.isWithinBounds(grid, spotX, spotY - 1)) {
+
                 if (isOccludedSpot(grid, spotX, spotY - 1)) {
                     upOccluded = true;
                 }
@@ -44,9 +44,8 @@ public abstract class Filter extends DynamicGridObject {
                 if (!isValidReceiver(receiver) || isOnWrongSideOfPrism(grid, spotX, spotY - 1, UP)) {
                     isValidSpot = false;
                 }
-            }
             // Check DOWN
-            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX, spotY + 1)) {
+            if (isValidSpot) {
                 if (isOccludedSpot(grid, spotX, spotY + 1)) {
                     downOccluded = true;
                 }
@@ -56,7 +55,7 @@ public abstract class Filter extends DynamicGridObject {
                 }
             }
             // Check LEFT
-            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX - 1, spotY)) {
+            if (isValidSpot) {
                 if (isOccludedSpot(grid, spotX - 1, spotY) && (upOccluded || downOccluded)) {
                     isValidSpot = false;
                 }
@@ -66,7 +65,7 @@ public abstract class Filter extends DynamicGridObject {
                 }
             }
             // Check RIGHT
-            if (isValidSpot && GridLayout.isWithinBounds(grid, spotX + 1, spotY)) {
+            if (isValidSpot) {
                 if (isOccludedSpot(grid, spotX + 1, spotY) && (upOccluded || downOccluded)) {
                     isValidSpot = false;
                 }
@@ -168,11 +167,9 @@ public abstract class Filter extends DynamicGridObject {
                 case LEFT:  newX = x - 1; break;
                 case RIGHT: newX = x + 1; break;
             }
-            if (GridLayout.isWithinBounds(grid, newX, newY)) {
-                short interactedLight = Light.create(newX, newY, this.colour, orientation);
-                grid[newX][newY].light = interactedLight;
-                lightProcessingQueue.add(interactedLight);
-            }
+            short interactedLight = Light.create(newX, newY, this.colour, orientation);
+            grid[newX][newY].light = interactedLight;
+            lightProcessingQueue.add(interactedLight);
         }
     }
 

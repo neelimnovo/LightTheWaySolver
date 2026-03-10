@@ -52,7 +52,6 @@ public class Prism extends DynamicGridObject {
     }
 
     private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation neighbourSpot) {
-        if (!GridLayout.isWithinBounds(grid, spotX, spotY)) return false;
         if (grid[spotX][spotY].cellStaticItem == WALL) return false;
         if (grid[spotX][spotY].cellStaticItem == EMPTY) {
             DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;

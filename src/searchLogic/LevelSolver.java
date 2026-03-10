@@ -33,8 +33,8 @@ public class LevelSolver {
     ShortQueue lightProcessingQueue;
     
     // Arrays for tracking which coordinates are lit, for fast O(L) resetting of the grid
-    int[] litSpotX = new int[20];
-    int[] litSpotY = new int[20];
+    int[] litSpotX = new int[50];
+    int[] litSpotY = new int[50];
     int litCount = 0;
     
     public GridCell[][] solutionGrid;
@@ -176,6 +176,8 @@ public class LevelSolver {
     private static boolean areIdenticalDGOs(DynamicGridObject a, DynamicGridObject b) {
         if (a.getClass() != b.getClass()) return false;
 
+        // After this point, we know that a and b are of the same class
+
         // No orienation or colour differentiation for BackwardMirror and ForwardMirror
         if (a instanceof BackwardMirror || a instanceof ForwardMirror) return true;
 
@@ -191,15 +193,16 @@ public class LevelSolver {
         if (a instanceof TJunction) {
             return ((TJunction) a).orientation == ((TJunction) b).orientation;
         }
+        // Filters: identical if same colour
+        if (a instanceof Filter) return ((Filter) a).colour == ((Filter) b).colour;
+
         // ColourShifter: identical if same orientation and colour
         if (a instanceof ColourShifter) {
             ColourShifter csA = (ColourShifter) a;
             ColourShifter csB = (ColourShifter) b;
             return csA.orientation == csB.orientation && csA.colour == csB.colour;
         }
-        // Filters: identical if same colour
-        if (a instanceof Filter) return ((Filter) a).colour == ((Filter) b).colour;
-
+        
         return false;
     }
 
@@ -207,15 +210,19 @@ public class LevelSolver {
     // EFFECTS: Starts light projecting for the level until it is complete
     // Then indicates whether level is solved or not
     public boolean projectLight(GridCell[][] grid) {
-        long emitTime = System.currentTimeMillis();
-        long projectTime = System.currentTimeMillis();
+        // long emitTime = System.currentTimeMillis();
+        // long projectTime = System.currentTimeMillis();
         emitLight(grid);
-        emitTime = System.currentTimeMillis() - emitTime;
-        timeSpentEmittingLight += emitTime;
+        // emitTime = System.currentTimeMillis() - emitTime;
+        // timeSpentEmittingLight += emitTime;
+        
         while (!lightProcessingQueue.isEmpty()) {
             short light = lightProcessingQueue.remove();
             
+            // Resize litSpot arrays if needed
+            // Ideally should not need this if we pre-allocate enough space
             if (litCount >= litSpotX.length) {
+                System.out.println("Resizing litSpot arrays");
                 int[] nX = new int[litSpotX.length * 2];
                 int[] nY = new int[litSpotY.length * 2];
                 System.arraycopy(litSpotX, 0, nX, 0, litSpotX.length);
@@ -227,14 +234,14 @@ public class LevelSolver {
             litSpotY[litCount] = Light.getY(light);
             litCount++;
 
-            long spreadTime = System.currentTimeMillis();
+            // long spreadTime = System.currentTimeMillis();
             spreadLight(light, grid);
-            spreadTime = System.currentTimeMillis() - spreadTime;
-            timeSpentSpreadingLight += spreadTime;
+            // spreadTime = System.currentTimeMillis() - spreadTime;
+            // timeSpentSpreadingLight += spreadTime;
         }
         attemptPermutations++;
         if (allReceiversArePowered(receiverSpots, grid)) {
-            timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
+            // timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
 
             System.out.println("Time spent projecting light: " + timeSpentProjectingLight);
             System.out.println("Time spent emitting light: " + timeSpentEmittingLight);
@@ -250,26 +257,25 @@ public class LevelSolver {
                 int spotY = spot.getValue();
                 grid[spotX][spotY].receiver.isPowered = false;
             }
-            
-            // Fast clear lights without iterating the whole grid
+
+            // Reset only places that were lit
             for (int i = 0; i < litCount; i++) {
                 grid[litSpotX[i]][litSpotY[i]].light = -1;
             }
             litCount = 0;
-            // GridLayout.resetLightInGridCellArray(grid);
 
-            timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
+            // timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
             return false;
         }
     }
 
     private boolean allReceiversArePowered(ArrayList<Pair<Integer, Integer>> receiverSpots, GridCell[][] grid) {
-        long checkTime = System.currentTimeMillis();
+        // long checkTime = System.currentTimeMillis();
         for(Pair<Integer, Integer> spot : receiverSpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
             if (!grid[spotX][spotY].receiver.isPowered) {
-                timeSpentCheckingReceiversPowered += System.currentTimeMillis() - checkTime;
+                // timeSpentCheckingReceiversPowered += System.currentTimeMillis() - checkTime;
                 return false;
                 }
             }
@@ -293,7 +299,9 @@ public class LevelSolver {
             if (dgo != null) {
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
                 return;
-            } else{
+            } else {
+                // TODO: Implement ray-cast processing, where light is projected in a straight line until it hits a wall or receiver
+                // or a DGO
                 incrementLight(light, grid);
                 return;
             }
@@ -308,12 +316,11 @@ public class LevelSolver {
 
     // EFFECTS: Starts emitting light from the light sources and adds them to the light processing queue
     private void emitLight(GridCell[][] grid) {
-        long emitTime = System.currentTimeMillis();
+        // long emitTime = System.currentTimeMillis();
         for (Pair<Integer, Integer> sourceSpot : sourceSpots.values()) {
             int spotX = sourceSpot.getKey();
             int spotY = sourceSpot.getValue();
             LightSource lightSource = (LightSource) grid[spotX][spotY].cellDynamicItem;
-            // Light source will never be placed next to bounds, so no out of bounds check needed
             int ord = lightSource.orientation.ordinal();
             int newX = spotX + DX[ord];
             int newY = spotY + DY[ord];
@@ -321,7 +328,7 @@ public class LevelSolver {
             grid[newX][newY].light = startingLight;
             lightProcessingQueue.add(startingLight);
         }
-        timeSpentEmittingLight += System.currentTimeMillis() - emitTime;
+        // timeSpentEmittingLight += System.currentTimeMillis() - emitTime;
     }
 
     // EFFECTS: Records the position of light sources for each iteration of solving
@@ -335,7 +342,7 @@ public class LevelSolver {
     // in the original direction of the light
     // Skips increment if it hits a wall, or goes out of bounds
     private void incrementLight(short light, GridCell[][] grid) {
-        long incrementTime = System.currentTimeMillis();
+        // long incrementTime = System.currentTimeMillis();
         int ord = Light.getOrientation(light).ordinal();
         int nx = Light.getX(light) + DX[ord];
         int ny = Light.getY(light) + DY[ord];
@@ -344,7 +351,7 @@ public class LevelSolver {
             grid[nx][ny].light = incrementedLight;
             lightProcessingQueue.add(incrementedLight);
         }
-        timeSpentIncrementingLight += System.currentTimeMillis() - incrementTime;
+        // timeSpentIncrementingLight += System.currentTimeMillis() - incrementTime;
     }
 
 }

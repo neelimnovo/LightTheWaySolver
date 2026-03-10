@@ -289,6 +289,38 @@
         {
           "cellStaticItem": "WALL"
         }
+      ],
+      [
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        },
+        {
+          "cellStaticItem": "WALL"
+        }
       ]
     ],
     "lights": [

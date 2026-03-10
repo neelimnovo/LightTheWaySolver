@@ -125,3 +125,10 @@ Time spent emitting light: 68
 Time spent spreading light: 14
 Time spent incrementing light: 6
 Time spent checking receivers powered: 3
+
+
+# L16
+"totalTime": 32338356,
+"totalPermutations": 36045979200,
+"attemptPermutations": 8970751500,
+"permutationRatio": 24.89
