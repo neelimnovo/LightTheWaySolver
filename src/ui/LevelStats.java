@@ -48,8 +48,11 @@ public class LevelStats {
         permutationsRatioColumn.setCellValueFactory(new PropertyValueFactory<>("permutationRatio"));
         permutationsRatioColumn.setMinWidth(300);
 
+        TableColumn<Integer, Stats> permutationsPerSecondColumn = new TableColumn<>("Permutations per second");
+        permutationsPerSecondColumn.setCellValueFactory(new PropertyValueFactory<>("permutationsPerSecond"));
+
         tableView.getColumns().addAll(titleColumn, timeColumn,
-                attemptPermutationsColumn, totalPermutationsColumn, permutationsRatioColumn);
+                attemptPermutationsColumn, totalPermutationsColumn, permutationsRatioColumn, permutationsPerSecondColumn);
 
         for (Stats stats: levelStatsArray) {
             tableView.getItems().add(stats);
@@ -74,14 +77,15 @@ public class LevelStats {
             File file = new File("src/statFiles/level_stats.csv");
             try (java.io.PrintWriter writer = new java.io.PrintWriter(file, "UTF-8")) {
                 // Write header
-                writer.println("Level Number,Solving Time (seconds),Attempted Permutations,Total Possible Permutations,Percentage of Attempted Permutations");
+                writer.println("Level Number,Solving Time (seconds),Attempted Permutations,Total Possible Permutations,Percentage of Attempted Permutations,Permutations per second");
                 for (Stats stats : levelStatsArray) {
-                    writer.printf("%s,%d,%d,%d,%.2f\n",
+                    writer.printf("%s,%d,%d,%d,%.2f,%.2f\n",
                             stats.getLevelName(),
                             stats.getTotalTime(),
                             stats.getAttemptPermutations(),
                             stats.getTotalPermutations(),
-                            stats.getPermutationRatio());
+                            stats.getPermutationRatio(),
+                            stats.getPermutationsPerSecond());
                 }
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Stats exported to src/saveFiles/level_stats.csv", ButtonType.OK);
                 alert.showAndWait();

@@ -49,6 +49,14 @@ public class Stats {
         return permutationRatio;
     }
 
+    public int getPermutationsPerSecond() {
+        double timeInSeconds = totalTime / 1000.0;
+        if (timeInSeconds == 0) {
+            timeInSeconds = 0.0001; 
+        }
+        return (int) (attemptPermutations / timeInSeconds);
+    }
+
     public Stats(GridCell[][] grid, long time, BigInteger total, long attempted) {
         this.solutionGrid = grid;
         this.totalTime = time;
