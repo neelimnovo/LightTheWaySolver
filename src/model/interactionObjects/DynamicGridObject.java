@@ -12,6 +12,8 @@ public abstract class DynamicGridObject {
 
     public abstract ArrayList<Pair<Integer, Integer>> filter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots);
 
+    public abstract ArrayList<Pair<Integer, Integer>> staticFilter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots);
+
     public abstract void interactWithLight(short light, GridCell[][] grid, ShortQueue lightProcessingQueue);
 
     public abstract String toString();

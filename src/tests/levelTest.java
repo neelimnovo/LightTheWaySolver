@@ -74,13 +74,13 @@ public class levelTest {
 
         // 3. Build the DGO queue in the same order as LevelRender
         LinkedList<DynamicGridObject> dgoQueue = new LinkedList<>();
+        addAllDGOs(dgoQueue, gridLayout.lights);
+        addAllDGOs(dgoQueue, gridLayout.tJunctions);
         addAllDGOs(dgoQueue, gridLayout.prisms);
+        addAllDGOs(dgoQueue, gridLayout.colourShifters);
         addAllDGOs(dgoQueue, gridLayout.redFilters);
         addAllDGOs(dgoQueue, gridLayout.blueFilters);
         addAllDGOs(dgoQueue, gridLayout.yellowFilters);
-        addAllDGOs(dgoQueue, gridLayout.colourShifters);
-        addAllDGOs(dgoQueue, gridLayout.lights);
-        addAllDGOs(dgoQueue, gridLayout.tJunctions);
         addAllDGOs(dgoQueue, gridLayout.frontMirrors);
         addAllDGOs(dgoQueue, gridLayout.backMirrors);
 
@@ -88,6 +88,7 @@ public class levelTest {
         LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions,
                 gridLayout.gridCellArray.length, gridLayout.gridCellArray[0].length);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
+        solver.precomputeStaticFilters(dgoQueue, gridLayout.gridCellArray);
 
         // 5. Solve the level
         System.out.println("Solving level: " + levelName);

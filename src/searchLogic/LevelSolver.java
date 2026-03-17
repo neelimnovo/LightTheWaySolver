@@ -8,7 +8,9 @@ import model.interactionObjects.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 import java.math.BigInteger;
 
 import static model.interactionObjects.StaticGridObject.*;
@@ -34,6 +36,12 @@ public class LevelSolver {
     int[] litSpotX = new int[50];
     int[] litSpotY = new int[50];
     int litCount = 0;
+
+    // Cache for O(1) lookup of empty spot indices
+    private final int[][] spotIndexGrid;
+
+    // Cache for static-filtered spots for each unique DGO in the level
+    private final HashMap<DynamicGridObject, ArrayList<Pair<Integer, Integer>>> staticFilteredSpotsCache = new HashMap<>();
     
     public GridCell[][] solutionGrid;
 
@@ -69,6 +77,17 @@ public class LevelSolver {
         this.emptySpots = emptySpots;
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
+
+        // Initialize spotIndexGrid for O(1) lookups
+        this.spotIndexGrid = new int[gridWidth][gridHeight];
+        for (int x = 0; x < gridWidth; x++) {
+            for (int y = 0; y < gridHeight; y++) {
+                spotIndexGrid[x][y] = -1;
+            }
+        }
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            spotIndexGrid[spot.getKey()][spot.getValue()] = emptySpots.indexOf(spot);
+        }
     }
 
     public void createStats(long emptySpots, long dynamicObjects) {
@@ -86,6 +105,34 @@ public class LevelSolver {
         }
     }
 
+    /**
+     * Precomputes the list of valid empty spots for each unique DynamicGridObject
+     * based solely on static grid elements. This cache is used to speed up the
+     * filtering process during the search, by not doing repetitive, static filtering computation on recursive calls.
+     *
+     * @param dgoList The list of all DynamicGridObjects in the level.
+     * @param initialGrid The initial grid state (only static elements matter for this precomputation).
+     */
+    public void precomputeStaticFilters(LinkedList<DynamicGridObject> dgoList, GridCell[][] initialGrid) {
+        Set<DynamicGridObject> processedDGOs = new HashSet<>();
+        for (DynamicGridObject currentDgo : dgoList) {
+            boolean alreadyProcessed = false;
+            for (DynamicGridObject processedDgo : processedDGOs) {
+                if (areIdenticalDGOs(currentDgo, processedDgo)) {
+                    staticFilteredSpotsCache.put(currentDgo, staticFilteredSpotsCache.get(processedDgo));
+                    alreadyProcessed = true;
+                    break;
+                }
+            }
+
+            if (!alreadyProcessed) {
+                ArrayList<Pair<Integer, Integer>> filteredSpots = currentDgo.staticFilter(initialGrid, this.emptySpots);
+                staticFilteredSpotsCache.put(currentDgo, filteredSpots);
+                processedDGOs.add(currentDgo);
+            }
+        }
+    }
+
     // EFFECTS: "Efficiently" iterates through all possible placement permutations to find a solution grid
     // iterationSpotIndex: for symmetry breaking — when placing an identical DGO to the previous one,
     // only consider spots at indices >= iterationSpotIndex to avoid redundant permutations
@@ -93,7 +140,13 @@ public class LevelSolver {
                               LinkedList<DynamicGridObject> dgoQueue, int iterationSpotIndex) {
         if (!dgoQueue.isEmpty()) {
             DynamicGridObject dgo = dgoQueue.remove();
-            ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, this.emptySpots);
+            
+            // Use the pre-computed static filtered spots as the base for the dynamic filter
+            ArrayList<Pair<Integer, Integer>> baseSpots = staticFilteredSpotsCache.get(dgo);
+            if (baseSpots == null) baseSpots = this.emptySpots; // Fallback, though shouldn't happen if precomputation is called
+            
+            // Perform further dynamic filtering on the base filtered spots
+            ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, baseSpots);
 
             int filteredSpotsStartIndex = 0;
             // Symmetry breaking: skip spots before iterationSpotIndex
@@ -155,18 +208,10 @@ public class LevelSolver {
         return false;        
     }
 
-    // EFFECTS: Returns the index of the given spot in the global emptySpots list, which is the same for all DGOs
+    // EFFECTS: Returns the index of the given spot in the global emptySpots list
     // This provides a canonical ordering for symmetry breaking.
     private int emptySpotIndex(Pair<Integer, Integer> spot) {
-        int sx = spot.getKey();
-        int sy = spot.getValue();
-        for (int i = 0; i < emptySpots.size(); i++) {
-            Pair<Integer, Integer> es = emptySpots.get(i);
-            if (es.getKey() == sx && es.getValue() == sy) {
-                return i;
-            }
-        }
-        return -1; // Should never happen
+        return spotIndexGrid[spot.getKey()][spot.getValue()];
     }
 
     // EFFECTS: Checks if two DynamicGridObjects are functionally identical
@@ -208,11 +253,7 @@ public class LevelSolver {
     // EFFECTS: Starts light projecting for the level until it is complete
     // Then indicates whether level is solved or not
     public boolean projectLight(GridCell[][] grid) {
-        // long emitTime = System.currentTimeMillis();
-        // long projectTime = System.currentTimeMillis();
         emitLight(grid);
-        // emitTime = System.currentTimeMillis() - emitTime;
-        // timeSpentEmittingLight += emitTime;
         
         while (!lightProcessingQueue.isEmpty()) {
             short light = lightProcessingQueue.remove();
@@ -220,26 +261,16 @@ public class LevelSolver {
             // Resize litSpot arrays if needed
             // Ideally should not need this if we pre-allocate enough space
             if (litCount >= litSpotX.length) {
-                System.out.println("Resizing litSpot arrays");
-                int[] nX = new int[litSpotX.length * 2];
-                int[] nY = new int[litSpotY.length * 2];
-                System.arraycopy(litSpotX, 0, nX, 0, litSpotX.length);
-                System.arraycopy(litSpotY, 0, nY, 0, litSpotY.length);
-                litSpotX = nX;
-                litSpotY = nY;
+                resizeLitSpotArrays();
             }
             litSpotX[litCount] = Light.getX(light);
             litSpotY[litCount] = Light.getY(light);
             litCount++;
 
-            // long spreadTime = System.currentTimeMillis();
             spreadLight(light, grid);
-            // spreadTime = System.currentTimeMillis() - spreadTime;
-            // timeSpentSpreadingLight += spreadTime;
         }
         attemptPermutations++;
         if (allReceiversArePowered(receiverSpots, grid)) {
-            // timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
 
             System.out.println("Time spent projecting light: " + timeSpentProjectingLight);
             System.out.println("Time spent emitting light: " + timeSpentEmittingLight);
@@ -262,7 +293,6 @@ public class LevelSolver {
             }
             litCount = 0;
 
-            // timeSpentProjectingLight += System.currentTimeMillis() - projectTime;
             return false;
         }
     }
@@ -273,7 +303,6 @@ public class LevelSolver {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
             if (!grid[spotX][spotY].receiver.isPowered) {
-                // timeSpentCheckingReceiversPowered += System.currentTimeMillis() - checkTime;
                 return false;
                 }
             }
@@ -298,8 +327,6 @@ public class LevelSolver {
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
                 return;
             } else {
-                // TODO: Implement ray-cast processing, where light is projected in a straight line until it hits a wall or receiver
-                // or a DGO
                 incrementLight(light, grid);
                 return;
             }
@@ -326,30 +353,56 @@ public class LevelSolver {
             grid[newX][newY].light = startingLight;
             lightProcessingQueue.add(startingLight);
         }
-        // timeSpentEmittingLight += System.currentTimeMillis() - emitTime;
     }
 
     // EFFECTS: Records the position of light sources for each iteration of solving
     private void trackLightSources(DynamicGridObject dgo, int spotX, int spotY) {
-        if (dgo.getClass() == LightSource.class) {
+        if (dgo instanceof LightSource) {
             sourceSpots.put((LightSource) dgo, new Pair<>(spotX, spotY));
         }
     }
 
-    // EFFECTS: Increments the light one grid cell at a time if it is possible to do so
-    // in the original direction of the light
+    // EFFECTS: Increments the light until it hits a wall, receiver, or DGO, in the original direction of the light
     // Skips increment if it hits a wall, or goes out of bounds
     private void incrementLight(short light, GridCell[][] grid) {
-        // long incrementTime = System.currentTimeMillis();
         int ord = Light.getOrientation(light).ordinal();
+        Colour col = Light.getColour(light);
         int nx = Light.getX(light) + DX[ord];
         int ny = Light.getY(light) + DY[ord];
-        if (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
-            short incrementedLight = Light.create(nx, ny, Light.getColour(light), Light.getOrientation(light));
-            grid[nx][ny].light = incrementedLight;
-            lightProcessingQueue.add(incrementedLight);
+
+        while (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny)) {
+            GridCell cell = grid[nx][ny];
+            if (cell.cellStaticItem == WALL) break;
+
+            short currentLight = Light.create(nx, ny, col, FaceOrientation.CACHED_VALUES[ord]);
+            cell.light = currentLight;
+
+            // If it's a collision point (DGO or Receiver), add to queue and stop ray
+            if (cell.cellDynamicItem != null || cell.cellStaticItem != EMPTY) {
+                lightProcessingQueue.add(currentLight);
+                break;
+            }
+
+            // It's empty space: record directly for reset since we skip the queue
+            if (litCount >= litSpotX.length) {
+                resizeLitSpotArrays();
+            }
+            litSpotX[litCount] = nx;
+            litSpotY[litCount] = ny;
+            litCount++;
+
+            nx += DX[ord];
+            ny += DY[ord];
         }
-        // timeSpentIncrementingLight += System.currentTimeMillis() - incrementTime;
+    }
+
+    private void resizeLitSpotArrays() {
+        int[] nX = new int[litSpotX.length * 2];
+        int[] nY = new int[litSpotY.length * 2];
+        System.arraycopy(litSpotX, 0, nX, 0, litSpotX.length);
+        System.arraycopy(litSpotY, 0, nY, 0, litSpotY.length);
+        litSpotX = nX;
+        litSpotY = nY;
     }
 
 }

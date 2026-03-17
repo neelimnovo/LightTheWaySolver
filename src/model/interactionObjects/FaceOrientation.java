@@ -3,6 +3,8 @@ package model.interactionObjects;
 public enum FaceOrientation {
     UP, DOWN, LEFT, RIGHT;
 
+    public static final FaceOrientation[] CACHED_VALUES = values();
+
     public static FaceOrientation getOppositeOrientation(FaceOrientation orientation) {
         switch (orientation) {
             case UP:

@@ -40,39 +40,55 @@ public class LightSource extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
+            boolean isDynamicValid = false;
+            switch (this.orientation) {
+                case UP:    isDynamicValid = isDynamicValidExit(grid, spotX, spotY - 1); break;
+                case DOWN:  isDynamicValid = isDynamicValidExit(grid, spotX, spotY + 1); break;
+                case LEFT:  isDynamicValid = isDynamicValidExit(grid, spotX - 1, spotY); break;
+                case RIGHT: isDynamicValid = isDynamicValidExit(grid, spotX + 1, spotY); break;
+            }
+            if (isDynamicValid) {
+                resultSpots.add(new Pair<>(spotX, spotY));
+            }
+        }
+        return resultSpots;
+    }
+
+    @Override
+    public ArrayList<Pair<Integer, Integer>> staticFilter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            int spotX = spot.getKey();
+            int spotY = spot.getValue();
+            boolean isStaticValid = false;
             switch (this.orientation) {
                 case UP:
-                    if (isValidExit(grid, spotX, spotY - 1)
-                        && isValidNeighbour(grid, spotX, spotY, DOWN)
-                        && isValidNeighbour(grid, spotX, spotY, LEFT)
-                        && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
-                            resultSpots.add(new Pair<>(spotX, spotY));
-                    }
+                    isStaticValid = isStaticValidExit(grid, spotX, spotY - 1)
+                        && isStaticValidNeighbour(grid, spotX, spotY, DOWN)
+                        && isStaticValidNeighbour(grid, spotX, spotY, LEFT)
+                        && isStaticValidNeighbour(grid, spotX, spotY, RIGHT);
                     break;
                 case DOWN:
-                    if (isValidExit(grid, spotX, spotY + 1)
-                            && isValidNeighbour(grid, spotX, spotY, UP)
-                            && isValidNeighbour(grid, spotX, spotY, LEFT)
-                            && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
-                        resultSpots.add(new Pair<>(spotX, spotY));
-                    }
+                    isStaticValid = isStaticValidExit(grid, spotX, spotY + 1)
+                            && isStaticValidNeighbour(grid, spotX, spotY, UP)
+                            && isStaticValidNeighbour(grid, spotX, spotY, LEFT)
+                            && isStaticValidNeighbour(grid, spotX, spotY, RIGHT);
                     break;
                 case LEFT:
-                    if (isValidExit(grid, spotX - 1, spotY)
-                            && isValidNeighbour(grid, spotX, spotY, UP)
-                            && isValidNeighbour(grid, spotX, spotY, DOWN)
-                            && isValidNeighbour(grid, spotX, spotY, RIGHT)) {
-                        resultSpots.add(new Pair<>(spotX, spotY));
-                    }
+                    isStaticValid = isStaticValidExit(grid, spotX - 1, spotY)
+                            && isStaticValidNeighbour(grid, spotX, spotY, UP)
+                            && isStaticValidNeighbour(grid, spotX, spotY, DOWN)
+                            && isStaticValidNeighbour(grid, spotX, spotY, RIGHT);
                     break;
                 case RIGHT:
-                    if (isValidExit(grid, spotX + 1, spotY)
-                            && isValidNeighbour(grid, spotX, spotY, UP)
-                            && isValidNeighbour(grid, spotX, spotY, DOWN)
-                            && isValidNeighbour(grid, spotX, spotY, LEFT)) {
-                        resultSpots.add(new Pair<>(spotX, spotY));
-                    }
+                    isStaticValid = isStaticValidExit(grid, spotX + 1, spotY)
+                            && isStaticValidNeighbour(grid, spotX, spotY, UP)
+                            && isStaticValidNeighbour(grid, spotX, spotY, DOWN)
+                            && isStaticValidNeighbour(grid, spotX, spotY, LEFT);
                     break;
+            }
+            if (isStaticValid) {
+                resultSpots.add(new Pair<>(spotX, spotY));
             }
         }
         return resultSpots;
@@ -86,20 +102,15 @@ public class LightSource extends DynamicGridObject {
     or a prism
     It cannot be a receiver that is being blocked
     */
-    private boolean isValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
+    private boolean isStaticValidNeighbour(GridCell[][] grid, int spotX, int spotY, FaceOrientation direction) {
+        int nbX = spotX, nbY = spotY;
         switch (direction) {
-            case UP:
-                // TODO should not be exiting light source, exiting shifter, prism or occlude a filter
-                return grid[spotX][spotY - 1].receiver == null;
-            case DOWN:
-                return grid[spotX][spotY + 1].receiver == null;
-            case LEFT:
-                return grid[spotX - 1][spotY].receiver == null;
-            case RIGHT:
-                return grid[spotX + 1][spotY].receiver == null;
-            default:
-                throw new IllegalStateException("Unexpected value: " + direction);
+            case UP:    nbY = spotY - 1; break;
+            case DOWN:  nbY = spotY + 1; break;
+            case LEFT:  nbX = spotX - 1; break;
+            case RIGHT: nbX = spotX + 1; break;
         }
+        return grid[nbX][nbY].receiver == null;
     }
 
     @Override
@@ -112,27 +123,21 @@ public class LightSource extends DynamicGridObject {
         return "Light Source: " + orientation;
     }
 
-    private boolean isValidExit(GridCell[][] grid, int spotX, int spotY) {
+    private boolean isStaticValidExit(GridCell[][] grid, int spotX, int spotY) {
         StaticGridObject sgo = grid[spotX][spotY].cellStaticItem;
-        // Source can directly face a white receiver
-        if (sgo == WHITE_RECEIVER) return true; 
-        
-        // If the grid is not empty at this point, its a wall or different color receiver
-        // which is not valid
-        if (sgo != EMPTY) return false; 
-        
+        return sgo == WHITE_RECEIVER || sgo == EMPTY;
+    }
+
+    private boolean isDynamicValidExit(GridCell[][] grid, int spotX, int spotY) {
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
         // Fully empty spot is valid
         if (dgo == null) return true;
-
+        
         // Exit cannot be blocked by another light source
         if (dgo instanceof LightSource) return false; 
-
-        // Exit cannot be blocked by a shifter that points into the light source.
-        if (dgo instanceof ColourShifter 
-                && ((ColourShifter) dgo).orientation == getOppositeOrientation(this.orientation)) return false;
         
         // Exit cannot be blocked by prism of improper orientation
+        if (dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation == getOppositeOrientation(this.orientation)) return false;
         if (dgo instanceof Prism && ((Prism) dgo).orientation != this.orientation) return false;
 
         // if its other dgo, it's fine. This would be a filter, based on the placement order

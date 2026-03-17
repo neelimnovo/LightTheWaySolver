@@ -117,6 +117,7 @@ public class LevelRender {
         LevelSolver solver = new LevelSolver(receiverPositions, emptyPositions,
             gridLayout.gridCellArray.length, gridLayout.gridCellArray[0].length);
         solver.createStats(emptyPositions.size(), dgoQueue.size());
+        solver.precomputeStaticFilters(dgoQueue, gridLayout.gridCellArray);
         long startTime = System.currentTimeMillis();
         solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue, 0);
         if (solver.solutionGrid != null) {
@@ -175,13 +176,13 @@ public class LevelRender {
         // TODO Improve placement logic e.g depending on if only  subset of the items are used
         // it might make sense to place them first over others
         // Specific example: If only sources, filters and mirrors, maybe place sources first
+        placeDynamicGridObjects(gridLayout.lights, renderedGrid, viableCoordinates, dgoQueue);
+        placeDynamicGridObjects(gridLayout.tJunctions, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.prisms, renderedGrid, viableCoordinates, dgoQueue);
+        placeDynamicGridObjects(gridLayout.colourShifters, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.redFilters, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.blueFilters, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.yellowFilters, renderedGrid, viableCoordinates, dgoQueue);
-        placeDynamicGridObjects(gridLayout.colourShifters, renderedGrid, viableCoordinates, dgoQueue);
-        placeDynamicGridObjects(gridLayout.lights, renderedGrid, viableCoordinates, dgoQueue);
-        placeDynamicGridObjects(gridLayout.tJunctions, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.frontMirrors, renderedGrid, viableCoordinates, dgoQueue);
         placeDynamicGridObjects(gridLayout.backMirrors, renderedGrid, viableCoordinates, dgoQueue);
         viableCoordinates.clear();

@@ -75,38 +75,46 @@ public class ColourShifter extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
-            if (isValidExit(grid, spotX, spotY)) {
+            if (isDynamicValidExit(grid, spotX, spotY)) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
         }
         return resultSpots;
     }
 
-    private boolean isValidExit(GridCell[][] grid, int spotX, int spotY) {
-        switch (this.orientation) {
-            case UP:
-                return spotIsNotWall(grid, spotX, spotY - 1)
-                        && spotIsNotWrongReceiver(grid, spotX, spotY - 1)
-                        && spotIsNotWrongFilterOrPrism(grid, spotX, spotY - 1)
-                        && spotIsNotWrongColourShifter(grid, spotX, spotY - 1);
-            case DOWN:
-                return spotIsNotWall(grid, spotX, spotY + 1)
-                        && spotIsNotWrongReceiver(grid, spotX, spotY + 1)
-                        && spotIsNotWrongFilterOrPrism(grid, spotX, spotY + 1)
-                        && spotIsNotWrongColourShifter(grid, spotX, spotY + 1);
-            case LEFT:
-                return spotIsNotWall(grid, spotX - 1, spotY)
-                        && spotIsNotWrongReceiver(grid, spotX - 1, spotY)
-                        && spotIsNotWrongFilterOrPrism(grid, spotX - 1, spotY)
-                        && spotIsNotWrongColourShifter(grid, spotX - 1, spotY);
-            case RIGHT:
-                return spotIsNotWall(grid, spotX + 1, spotY)
-                        && spotIsNotWrongReceiver(grid, spotX + 1, spotY)
-                        && spotIsNotWrongFilterOrPrism(grid, spotX + 1, spotY)
-                        && spotIsNotWrongColourShifter(grid, spotX + 1, spotY);
-            default:
-                throw new IllegalStateException("Unexpected value: " + this.orientation);
+    @Override
+    public ArrayList<Pair<Integer, Integer>> staticFilter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            int spotX = spot.getKey();
+            int spotY = spot.getValue();
+            if (isStaticValidExit(grid, spotX, spotY)) {
+                resultSpots.add(new Pair<>(spotX, spotY));
+            }
         }
+        return resultSpots;
+    }
+
+    private boolean isStaticValidExit(GridCell[][] grid, int spotX, int spotY) {
+        int exX = spotX, exY = spotY;
+        switch (this.orientation) {
+            case UP:    exY = spotY - 1; break;
+            case DOWN:  exY = spotY + 1; break;
+            case LEFT:  exX = spotX - 1; break;
+            case RIGHT: exX = spotX + 1; break;
+        }
+        return spotIsNotWall(grid, exX, exY) && spotIsNotWrongReceiver(grid, exX, exY);
+    }
+
+    private boolean isDynamicValidExit(GridCell[][] grid, int spotX, int spotY) {
+        int exX = spotX, exY = spotY;
+        switch (this.orientation) {
+            case UP:    exY = spotY - 1; break;
+            case DOWN:  exY = spotY + 1; break;
+            case LEFT:  exX = spotX - 1; break;
+            case RIGHT: exX = spotX + 1; break;
+        }
+        return spotIsNotWrongFilterOrPrism(grid, exX, exY) && spotIsNotWrongColourShifter(grid, exX, exY);
     }
 
     private boolean spotIsNotWrongColourShifter(GridCell[][] grid, int spotX, int spotY) {

@@ -28,52 +28,31 @@ public abstract class Filter extends DynamicGridObject {
         for (Pair<Integer, Integer> spot : emptySpots) {
             int spotX = spot.getKey();
             int spotY = spot.getValue();
-            Receiver receiver;
             boolean isValidSpot = true;
-            boolean upOccluded = false;
-            boolean downOccluded = false;
-            boolean leftOccluded = false;
-            boolean rightOccluded = false;
 
-            // Check UP
+            if (isInvalidDynamicOjbect(grid, spotX, spotY - 1, UP) ||
+                isInvalidDynamicOjbect(grid, spotX, spotY + 1, DOWN) ||
+                isInvalidDynamicOjbect(grid, spotX - 1, spotY, LEFT) ||
+                isInvalidDynamicOjbect(grid, spotX + 1, spotY, RIGHT)) isValidSpot = false;
+            
+            // If it still valid, check for other invalidity factors
+            if (isValidSpot) {
+                boolean upDynamicOccluded = isDynamicOccludedSpot(grid, spotX, spotY - 1, UP);
+                boolean downDynamicOccluded = isDynamicOccludedSpot(grid, spotX, spotY + 1, DOWN);
+                boolean leftDynamicOccluded = isDynamicOccludedSpot(grid, spotX - 1, spotY, LEFT);
+                
+                // Re-calculating static occlusions for the "&& (up || down)" part
+                boolean upStaticOccluded = isStaticOccludedSpot(grid, spotX, spotY - 1);
+                boolean downStaticOccluded = isStaticOccludedSpot(grid, spotX, spotY + 1);
+                boolean upOccluded = upStaticOccluded || upDynamicOccluded;
+                boolean downOccluded = downStaticOccluded || downDynamicOccluded;
 
-                if (isOccludedSpot(grid, spotX, spotY - 1)) {
-                    upOccluded = true;
-                }
-                receiver = grid[spotX][spotY - 1].receiver;
-                if (!isValidReceiver(receiver) || isOnWrongSideOfPrism(grid, spotX, spotY - 1, UP)) {
-                    isValidSpot = false;
-                }
-            // Check DOWN
-            if (isValidSpot) {
-                if (isOccludedSpot(grid, spotX, spotY + 1)) {
-                    downOccluded = true;
-                }
-                receiver = grid[spotX][spotY + 1].receiver;
-                if (!isValidReceiver(receiver) || isOnWrongSideOfPrism(grid, spotX, spotY + 1, DOWN)) {
-                    isValidSpot = false;
-                }
+                // check left and top or bottom occlusion
+                if ((leftDynamicOccluded || isStaticOccludedSpot(grid, spotX - 1, spotY)) && (upOccluded || downOccluded)) isValidSpot = false;
+                // check right and top or bottom occlusion
+                if (isValidSpot && (isDynamicOccludedSpot(grid, spotX + 1, spotY, RIGHT) || isStaticOccludedSpot(grid, spotX + 1, spotY)) && (upOccluded || downOccluded)) isValidSpot = false;
             }
-            // Check LEFT
-            if (isValidSpot) {
-                if (isOccludedSpot(grid, spotX - 1, spotY) && (upOccluded || downOccluded)) {
-                    isValidSpot = false;
-                }
-                receiver = grid[spotX - 1][spotY].receiver;
-                if (!isValidReceiver(receiver) || isOnWrongSideOfPrism(grid, spotX - 1, spotY, LEFT)) {
-                    isValidSpot = false;
-                }
-            }
-            // Check RIGHT
-            if (isValidSpot) {
-                if (isOccludedSpot(grid, spotX + 1, spotY) && (upOccluded || downOccluded)) {
-                    isValidSpot = false;
-                }
-                receiver = grid[spotX + 1][spotY].receiver;
-                if (!isValidReceiver(receiver) || isOnWrongSideOfPrism(grid, spotX + 1, spotY, RIGHT)) {
-                    isValidSpot = false;
-                }
-            }
+            
             if (isValidSpot) {
                 resultSpots.add(new Pair<>(spotX, spotY));
             }
@@ -81,72 +60,157 @@ public abstract class Filter extends DynamicGridObject {
         return resultSpots;
     }
 
-    private boolean isOccludedSpot(GridCell[][] grid, int spotX, int spotY) {
-        // Walls block everything
-        if (grid[spotX][spotY].cellStaticItem == WALL) return true;
-        DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
-        // Occlussion by another filter happens if it of a different colour
-        if (dgo != null && dgo instanceof Filter) {
-            return ((Filter) dgo).colour != this.colour;
-        } else {
-            return false;
+    @Override
+    public ArrayList<Pair<Integer, Integer>> staticFilter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>(emptySpots.size());
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            int spotX = spot.getKey();
+            int spotY = spot.getValue();
+            boolean isValidSpot = true;
+            
+            boolean upOccluded = isStaticOccludedSpot(grid, spotX, spotY - 1);
+            boolean downOccluded = isStaticOccludedSpot(grid, spotX, spotY + 1);
+            
+            if (!isValidReceiver(grid[spotX][spotY - 1].receiver)) isValidSpot = false;
+            if (isValidSpot && !isValidReceiver(grid[spotX][spotY + 1].receiver)) isValidSpot = false;
+            if (isValidSpot && !isValidReceiver(grid[spotX - 1][spotY].receiver)) isValidSpot = false;
+            if (isValidSpot && !isValidReceiver(grid[spotX + 1][spotY].receiver)) isValidSpot = false;
+            
+            // Becomes invalid if any two adjacent-sides are blocked by walls 
+            if (isValidSpot) {
+                if (isStaticOccludedSpot(grid, spotX - 1, spotY) && (upOccluded || downOccluded)) isValidSpot = false;
+                if (isValidSpot && isStaticOccludedSpot(grid, spotX + 1, spotY) && (upOccluded || downOccluded)) isValidSpot = false;
+            }
+
+            if (isValidSpot) {
+                resultSpots.add(new Pair<>(spotX, spotY));
+            }
         }
+        return resultSpots;
     }
 
-    private boolean isOnWrongSideOfPrism(GridCell[][] grid, int spotX, int spotY, FaceOrientation filterSide) {
+    private boolean isStaticOccludedSpot(GridCell[][] grid, int spotX, int spotY) {
+        return grid[spotX][spotY].cellStaticItem == WALL;
+    }
+
+    private boolean isDynamicOccludedSpot(GridCell[][] grid, int spotX, int spotY, FaceOrientation position) {
+        // Dynamic occlusion means one side is covered such that light cannot exit through that side
         DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
-        if (dgo != null && dgo instanceof Prism) {
-            switch (filterSide) {
-                // Above the filter
+        if (dgo == null) return false;
+        if (dgo instanceof Filter) {
+            // Adjacent to a different coloured filter is an occlusion
+            return ((Filter) dgo).colour != this.colour;
+        }
+        if (dgo instanceof LightSource) {
+            // Adjacent to any non-entrance side of a light source is an occlusion
+            switch (position) {
                 case UP:
-                    // upPrisms are blocked if placed above a filter
-                    if (((Prism) dgo).orientation == UP) return true;
-                    switch (colour) {
-                        case RED:
-                            return ((Prism) dgo).orientation != DOWN;
-                        case BLUE:
-                            return ((Prism) dgo).orientation != LEFT;
-                        case YELLOW:
-                            return ((Prism) dgo).orientation != UP;
-                    }
-                    break;
-                // Below the filter
+                    return ((LightSource) dgo).orientation != DOWN;
                 case DOWN:
-                    // downPrisms are blocked if placed below a filter
-                    if (((Prism) dgo).orientation == DOWN) return true;
-                    switch (colour) {
-                        case RED:
-                            return ((Prism) dgo).orientation != UP;
-                        case BLUE:
-                            return ((Prism) dgo).orientation != RIGHT;
-                        case YELLOW:
-                            return ((Prism) dgo).orientation != LEFT;
-                    }
-                // Left of the filter
+                    return ((LightSource) dgo).orientation != UP;
                 case LEFT:
-                    // leftPrisms are blocked if placed to the left of a filter
-                    if (((Prism) dgo).orientation == LEFT) return true;
-                    switch (colour) {
-                        case RED:
-                            return ((Prism) dgo).orientation != RIGHT;
-                        case BLUE:
-                            return ((Prism) dgo).orientation != DOWN;
-                        case YELLOW:
-                            return ((Prism) dgo).orientation != UP;
-                    }
-                // Right of the filter
+                    return ((LightSource) dgo).orientation != RIGHT;
                 case RIGHT:
-                    // rightPrisms are blocked if placed to the right of a filter
-                    if (((Prism) dgo).orientation == RIGHT) return true;
-                    switch (colour) {
-                        case RED:
-                            return ((Prism) dgo).orientation != LEFT;
-                        case BLUE:
-                            return ((Prism) dgo).orientation != UP;
-                        case YELLOW:
-                            return ((Prism) dgo).orientation != DOWN;
-                    }
+                    return ((LightSource) dgo).orientation != LEFT;
             }
+        }
+        // Backside of tjunction is an occlusion
+        if (dgo instanceof TJunction) {
+            switch (position) {
+                case UP:
+                    return ((TJunction) dgo).orientation == DOWN;
+                case DOWN:
+                    return ((TJunction) dgo).orientation == UP;
+                case LEFT:
+                    return ((TJunction) dgo).orientation == RIGHT;
+                case RIGHT:
+                    return ((TJunction) dgo).orientation == LEFT;
+            }
+        }
+        if (dgo instanceof ColourShifter) {
+            // Adjacent to a different coloured shifter is an occlusion
+            return ((ColourShifter) dgo).colour != this.colour;
+        }
+        // No occlusion created by either mirrors
+        return false;
+    }
+
+    private boolean isInvalidDynamicOjbect(GridCell[][] grid, int spotX, int spotY, FaceOrientation position) {
+        DynamicGridObject dgo = grid[spotX][spotY].cellDynamicItem;
+        if (dgo == null) return false;
+        if (dgo instanceof Filter) {
+            return ((Filter) dgo).colour != this.colour;
+        }
+        if (dgo instanceof Prism && isOnWrongSideOfPrism((Prism) dgo, spotX, spotY, position)) {
+            return true;
+        }
+        if (dgo instanceof ColourShifter && ((ColourShifter) dgo).colour != this.colour) {
+            // Invalid placement if placed at the mouth of a differently coloured colour shifter
+            switch (position) {
+                case UP:
+                    return ((ColourShifter) dgo).orientation == DOWN;
+                case DOWN:
+                    return ((ColourShifter) dgo).orientation == UP;
+                case LEFT:
+                    return ((ColourShifter) dgo).orientation == RIGHT;
+                case RIGHT:
+                    return ((ColourShifter) dgo).orientation == LEFT;
+            }
+        }
+        return false;
+    }
+
+    private boolean isOnWrongSideOfPrism(Prism prism, int spotX, int spotY, FaceOrientation filterSide) {
+        switch (filterSide) {
+            // Above the filter
+            case UP:
+                // upPrisms are blocked if placed above a filter
+                if (prism.orientation == UP) return true;
+                switch (colour) {
+                    case RED:
+                        return prism.orientation != DOWN;
+                    case BLUE:
+                        return prism.orientation != LEFT;
+                    case YELLOW:
+                        return prism.orientation != UP;
+                }
+                break;
+            // Below the filter
+            case DOWN:
+                // downPrisms are blocked if placed below a filter
+                if (prism.orientation == DOWN) return true;
+                switch (colour) {
+                    case RED:
+                        return prism.orientation != UP;
+                    case BLUE:
+                        return prism.orientation != RIGHT;
+                    case YELLOW:
+                        return prism.orientation != LEFT;
+                }
+            // Left of the filter
+            case LEFT:
+                // leftPrisms are blocked if placed to the left of a filter
+                if (prism.orientation == LEFT) return true;
+                switch (colour) {
+                    case RED:
+                        return prism.orientation != RIGHT;
+                    case BLUE:
+                        return prism.orientation != DOWN;
+                    case YELLOW:
+                        return prism.orientation != UP;
+                }
+            // Right of the filter
+            case RIGHT:
+                // rightPrisms are blocked if placed to the right of a filter
+                if (prism.orientation == RIGHT) return true;
+                switch (colour) {
+                    case RED:
+                        return prism.orientation != LEFT;
+                    case BLUE:
+                        return prism.orientation != UP;
+                    case YELLOW:
+                        return prism.orientation != DOWN;
+                }
         }
         return false;
     }

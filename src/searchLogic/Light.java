@@ -21,11 +21,11 @@ public class Light {
     }
 
     public static Colour getColour(short light) {
-        return Colour.values()[(light & 0x0300) >> 8];
+        return Colour.CACHED_VALUES[(light & 0x0300) >> 8];
     }
 
     public static FaceOrientation getOrientation(short light) {
-        return FaceOrientation.values()[(light & 0x0C00) >> 10];
+        return FaceOrientation.CACHED_VALUES[(light & 0x0C00) >> 10];
     }
 
     public static String getCorrectLightString(short light) {

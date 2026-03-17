@@ -43,17 +43,49 @@ public class TJunction extends DynamicGridObject {
             switch (this.orientation) {
                 case UP:
                 case DOWN:
-                    if (!isValidJunctionExits(1, grid, spotX, spotY)
-                            || !isValidJunctionEntrance(grid, spotX, spotY)
-                            || !isValidJunctionBack(grid, spotX, spotY)){
+                    if (!isDynamicValidJunctionExits(1, grid, spotX, spotY)
+                            || !isDynamicValidJunctionEntrance(grid, spotX, spotY)
+                            || !isDynamicValidJunctionBack(grid, spotX, spotY)){
                         isValidSpot = false;
                     }
                     break;
                 case LEFT:
                 case RIGHT:
-                    if (!isValidJunctionExits(2, grid, spotX, spotY)
-                            || !isValidJunctionEntrance(grid, spotX, spotY)
-                            || !isValidJunctionBack(grid, spotX, spotY)){
+                    if (!isDynamicValidJunctionExits(2, grid, spotX, spotY)
+                            || !isDynamicValidJunctionEntrance(grid, spotX, spotY)
+                            || !isDynamicValidJunctionBack(grid, spotX, spotY)){
+                        isValidSpot = false;
+                    }
+                    break;
+            }
+            if (isValidSpot) {
+                resultSpots.add(new Pair<>(spotX, spotY));
+            }
+        }
+        return resultSpots;
+    }
+
+    @Override
+    public ArrayList<Pair<Integer, Integer>> staticFilter(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots) {
+        ArrayList<Pair<Integer, Integer>> resultSpots = new ArrayList<>();
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            int spotX = spot.getKey();
+            int spotY = spot.getValue();
+            boolean isValidSpot = true;
+            switch (this.orientation) {
+                case UP:
+                case DOWN:
+                    if (!isStaticValidJunctionExits(1, grid, spotX, spotY)
+                            || !isStaticValidJunctionEntrance(grid, spotX, spotY)
+                            || !isStaticValidJunctionBack(grid, spotX, spotY)){
+                        isValidSpot = false;
+                    }
+                    break;
+                case LEFT:
+                case RIGHT:
+                    if (!isStaticValidJunctionExits(2, grid, spotX, spotY)
+                            || !isStaticValidJunctionEntrance(grid, spotX, spotY)
+                            || !isStaticValidJunctionBack(grid, spotX, spotY)){
                         isValidSpot = false;
                     }
                     break;
@@ -67,8 +99,18 @@ public class TJunction extends DynamicGridObject {
     }
 
 
-    private boolean isValidJunctionBack(GridCell[][] grid, int spotX, int spotY) {
-        DynamicGridObject dgo = null;
+    private boolean isStaticValidJunctionBack(GridCell[][] grid, int spotX, int spotY) {
+        int newX = spotX, newY = spotY;
+        switch (this.orientation) {
+            case UP:    newY = spotY - 1; break;
+            case DOWN:  newY = spotY + 1; break;
+            case LEFT:  newX = spotX - 1; break;
+            case RIGHT: newX = spotX + 1; break;
+        }
+        return grid[newX][newY].receiver == null;
+    }
+
+    private boolean isDynamicValidJunctionBack(GridCell[][] grid, int spotX, int spotY) {
         int newX = spotX, newY = spotY;
         FaceOrientation backDgoOrientation = null;
         switch (this.orientation) {
@@ -90,8 +132,7 @@ public class TJunction extends DynamicGridObject {
                 break;
         }
         
-        if (grid[newX][newY].receiver != null) return false;
-        dgo = grid[newX][newY].cellDynamicItem;
+        DynamicGridObject dgo = grid[newX][newY].cellDynamicItem;
         if (dgo == null) return true;
         // Light source cannot face directly into the backside of the junction
         if (dgo instanceof LightSource && ((LightSource) dgo).orientation == backDgoOrientation) return false;
@@ -105,10 +146,29 @@ public class TJunction extends DynamicGridObject {
         return true;
     }
 
+    private boolean isStaticValidJunctionEntrance(GridCell[][] grid, int spotX, int spotY) {
+        int entX = spotX, entY = spotY;
+        switch (this.orientation) {
+            case UP:    entY = spotY + 1; break;
+            case DOWN:  entY = spotY - 1; break;
+            case LEFT:  entX = spotX + 1; break;
+            case RIGHT: entX = spotX - 1; break;
+        }
+        return grid[entX][entY].cellStaticItem == EMPTY;
+    }
 
-    private boolean isValidJunctionEntrance(GridCell[][] grid, int spotX, int spotY) {
-        DynamicGridObject dgo = null;
-        int entranceDir;
+    private boolean isDynamicValidJunctionEntrance(GridCell[][] grid, int spotX, int spotY) {
+        int entX = spotX, entY = spotY;
+        switch (this.orientation) {
+            case UP:    entY = spotY + 1; break;
+            case DOWN:  entY = spotY - 1; break;
+            case LEFT:  entX = spotX + 1; break;
+            case RIGHT: entX = spotX - 1; break;
+        }
+        
+        DynamicGridObject dgo = grid[entX][entY].cellDynamicItem;
+        if (dgo == null) return true;
+        
         switch (this.orientation) {
             /**
              * For each orientation case, check for the entrance that:
@@ -120,66 +180,53 @@ public class TJunction extends DynamicGridObject {
              * 6) If prism, the prism's entrance cannot face the junction entrance
              */
             case UP:
-                entranceDir = spotY + 1;
-                if (grid[spotX][entranceDir].cellStaticItem != EMPTY) return false;
-                dgo = grid[spotX][entranceDir].cellDynamicItem;
-                if (dgo != null) {
-                    if(dgo instanceof LightSource && ((LightSource) dgo).orientation != UP) return false;
-                    if(dgo instanceof TJunction
-                            && (((TJunction) dgo).orientation != LEFT 
-                                || ((TJunction) dgo).orientation != RIGHT)) return false;
-                    if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != UP) return false;
-                    if(dgo instanceof Prism && ((Prism) dgo).orientation != DOWN) return false;
-                }
+                if(dgo instanceof LightSource && ((LightSource) dgo).orientation != UP) return false;
+                if(dgo instanceof TJunction
+                        && (((TJunction) dgo).orientation != LEFT 
+                            || ((TJunction) dgo).orientation != RIGHT)) return false;
+                if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != UP) return false;
+                if(dgo instanceof Prism && ((Prism) dgo).orientation != DOWN) return false;
                 break;
             case DOWN:
-                entranceDir = spotY - 1;
-                if (grid[spotX][entranceDir].cellStaticItem != EMPTY) return false;
-                dgo = grid[spotX][entranceDir].cellDynamicItem;
-
-                if (dgo != null) {
-                    if(dgo instanceof LightSource && ((LightSource) dgo).orientation != DOWN) return false;
+                if(dgo instanceof LightSource && ((LightSource) dgo).orientation != DOWN) return false;
                     if(dgo instanceof TJunction
                             && (((TJunction) dgo).orientation != LEFT 
                                 || ((TJunction) dgo).orientation != RIGHT)) return false;
-                    if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != DOWN) return false;
-                    if(dgo instanceof Prism && ((Prism) dgo).orientation != UP) return false;
-                }
+                if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != DOWN) return false;
+                if(dgo instanceof Prism && ((Prism) dgo).orientation != UP) return false;
                 break;
             case LEFT:
-                entranceDir = spotX + 1;
-                if (grid[entranceDir][spotY].cellStaticItem != EMPTY) return false;
-                dgo = grid[entranceDir][spotY].cellDynamicItem;
-
-                if (dgo != null) {
-                    if(dgo instanceof LightSource && ((LightSource) dgo).orientation != LEFT) return false;
+                if(dgo instanceof LightSource && ((LightSource) dgo).orientation != LEFT) return false;
                     if(dgo instanceof TJunction
                             && (((TJunction) dgo).orientation != UP 
                                 || ((TJunction) dgo).orientation != DOWN)) return false;
-                    if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != LEFT) return false;
-                    if(dgo instanceof Prism && ((Prism) dgo).orientation != RIGHT) return false;
-                }
+                if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != LEFT) return false;
+                if(dgo instanceof Prism && ((Prism) dgo).orientation != RIGHT) return false;
                 break;
             case RIGHT:
-                entranceDir = spotX - 1;
-
-                if (grid[entranceDir][spotY].cellStaticItem != EMPTY) return false;
-                dgo = grid[entranceDir][spotY].cellDynamicItem;
-                if (dgo != null) {
-                    if(dgo instanceof LightSource && ((LightSource) dgo).orientation != RIGHT) return false;
+                if(dgo instanceof LightSource && ((LightSource) dgo).orientation != RIGHT) return false;
                     if(dgo instanceof TJunction
                             && (((TJunction) dgo).orientation != UP 
                                 || ((TJunction) dgo).orientation != DOWN)) return false;
-                    if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != RIGHT) return false;
-                    if(dgo instanceof Prism && ((Prism) dgo).orientation != LEFT) return false;
-                }
+                if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != RIGHT) return false;
+                if(dgo instanceof Prism && ((Prism) dgo).orientation != LEFT) return false;
                 break;
         }
         return true;
     }
 
 
-    private boolean isValidJunctionExits(int sides, GridCell[][] grid, int spotX, int spotY) {
+    private boolean isStaticValidJunctionExits(int sides, GridCell[][] grid, int spotX, int spotY) {
+        switch (sides) {
+            case 1: // Check Left and Right sides
+                return grid[spotX - 1][spotY].cellStaticItem != WALL && grid[spotX + 1][spotY].cellStaticItem != WALL;
+            case 2: // Check Top and Bottom sides
+                return grid[spotX][spotY - 1].cellStaticItem != WALL && grid[spotX][spotY + 1].cellStaticItem != WALL;
+        }
+        return true;
+    }
+
+    private boolean isDynamicValidJunctionExits(int sides, GridCell[][] grid, int spotX, int spotY) {
         /*
         * Sides refers to whether the exits are left and right facing (for up and down junctions)
         * or
@@ -187,27 +234,12 @@ public class TJunction extends DynamicGridObject {
         */
         switch (sides) {
             case 1: // Check Left and Right sides
-                if (grid[spotX - 1][spotY].cellStaticItem == WALL
-                        || isInvalidDynamicSideForExit(grid, LEFT, spotX, spotY)) {
-                    return false;
-                }
-
-                if (grid[spotX + 1][spotY].cellStaticItem == WALL
-                        || isInvalidDynamicSideForExit(grid, RIGHT, spotX, spotY)) {
-                    return false;
-                }
-
+                if (isInvalidDynamicSideForExit(grid, LEFT, spotX, spotY)) return false;
+                if (isInvalidDynamicSideForExit(grid, RIGHT, spotX, spotY)) return false;
                 break;
             case 2: // Check Top and Bottom sides
-                if (grid[spotX][spotY - 1].cellStaticItem == WALL
-                        || isInvalidDynamicSideForExit(grid, UP, spotX, spotY)) {
-                    return false;
-                }
-
-                if (grid[spotX][spotY + 1].cellStaticItem == WALL
-                        || isInvalidDynamicSideForExit(grid, DOWN, spotX, spotY)) {
-                    return false;
-                }
+                if (isInvalidDynamicSideForExit(grid, UP, spotX, spotY)) return false;
+                if (isInvalidDynamicSideForExit(grid, DOWN, spotX, spotY)) return false;
                 break;
         }
         return true;
