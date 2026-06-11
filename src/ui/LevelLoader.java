@@ -28,8 +28,8 @@ public class LevelLoader {
         gridPane.setStyle("-fx-background-color:" + SCENE_BLUE + ";"
             + "-fx-background-radius: 16;"
             + "-fx-effect: dropshadow(gaussian, #00000022, 8, 0.2, 0, 2);");
-        File levelsFolder = new File("src\\saveFiles\\");
-        File solutionsFolder = new File("src\\solutionFiles\\");
+        File levelsFolder = new File("src/saveFiles/");
+        File solutionsFolder = new File("src/solutionFiles/");
         String[] levels = levelsFolder.list();
         List<String> levelsSolutions = new ArrayList<>(Arrays.asList(solutionsFolder.list()));
         levelsSolutions = levelsSolutions.stream()

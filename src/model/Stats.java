@@ -78,7 +78,7 @@ public class Stats {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Stats loadedStats = null;
         try {
-            FileReader fileReader = new FileReader("src\\solutionFiles\\" + fileName);
+            FileReader fileReader = new FileReader("src/solutionFiles/" + fileName);
             JsonReader reader = new JsonReader(fileReader);
             loadedStats = gson.fromJson(reader, Stats.class);
             this.levelName = loadedStats.levelName;
@@ -101,7 +101,7 @@ public class Stats {
     public static Object loadPreexistingStat(String fileName, String statName) {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         try {
-            FileReader fileReader = new FileReader("src\\solutionFiles\\" + fileName + " solution.json");
+            FileReader fileReader = new FileReader("src/solutionFiles/" + fileName + " solution.json");
             JsonReader reader = new JsonReader(fileReader);
             Stats loadedStats = gson.fromJson(reader, Stats.class);
             switch (statName) {
@@ -140,7 +140,7 @@ public class Stats {
         Gson gson = new Gson();
         String saveFileJSON = gson.toJson(this);
         try {
-            FileWriter writer = new FileWriter("src\\solutionFiles\\" + fileName + " solution.json");
+            FileWriter writer = new FileWriter("src/solutionFiles/" + fileName + " solution.json");
             writer.write(saveFileJSON);
             writer.close();
         } catch (IOException e) {

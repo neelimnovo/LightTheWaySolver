@@ -9,3 +9,4 @@ lib/
 
 test*.*
 run.bat
+.DS_Store

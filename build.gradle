@@ -24,11 +24,29 @@ sourceSets {
 
 dependencies {
     implementation 'org.openjfx:javafx-controls:25'
-    implementation 'org.openjfx:javafx-fxml:25' 
+    implementation 'org.openjfx:javafx-fxml:25'
     implementation 'org.openjfx:javafx-graphics:25'
-    implementation 'org.openjfx:javafx-base:25'          
+    implementation 'org.openjfx:javafx-base:25'
     implementation 'com.google.code.gson:gson:2.13.2'
 
+}
+
+// Compile C++ solver
+task compileCpp(type: Exec) {
+    workingDir 'src/cpp/solver'
+    commandLine 'g++', '-O3', '-std=c++17', '-w', '-o', 'solver',
+                  'main.cpp', 'Grid.cpp', 'Solver.cpp'
+}
+
+// Run C++ solver test
+task runCppSolver(type: Exec, dependsOn: 'compileCpp') {
+    workingDir 'src/cpp/solver'
+    commandLine './solver'
+}
+
+// Clean C++ build
+task cleanCpp(type: Delete) {
+    delete 'src/cpp/solver/solver'
 }
 
 javafx {
@@ -55,7 +73,16 @@ task runTest(type: JavaExec) {
     args = project.hasProperty('levelName') ? [project.property('levelName')] : []
 }
 
+// Run the headless level solver test using the C++ solver
+// Usage: gradle runTestCpp -PlevelName="Level 015.json"
+task runTestCpp(type: JavaExec, dependsOn: 'compileCpp') {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tests.levelTestCpp'
+    args = project.hasProperty('levelName') ? [project.property('levelName')] : []
+}
+
 task debugRun(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'tests.DebugRun'
 }
+

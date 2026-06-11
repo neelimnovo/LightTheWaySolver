@@ -20,7 +20,7 @@ public class LevelStats {
     static Scene createLevelStatsScene() {
         levelStatsArray = new ArrayList<>();
         // Load all the statistics
-        File levelsFolder = new File("src\\solutionFiles\\");
+        File levelsFolder = new File("src/solutionFiles/");
         String[] levels = levelsFolder.list();
         for (String level : levels) {
             Stats tempStat = new Stats();

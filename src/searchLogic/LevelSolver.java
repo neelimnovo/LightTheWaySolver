@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.math.BigInteger;
+import java.io.*;
+import java.util.concurrent.*;
 
 import static model.interactionObjects.StaticGridObject.*;
 import static model.interactionObjects.Colour.*;
@@ -365,34 +367,76 @@ public class LevelSolver {
     // EFFECTS: Increments the light until it hits a wall, receiver, or DGO, in the original direction of the light
     // Skips increment if it hits a wall, or goes out of bounds
     private void incrementLight(short light, GridCell[][] grid) {
+        // Ray‑cast the light forward until it hits a WALL, a RECEIVER, or a DynamicGridObject.
         int ord = Light.getOrientation(light).ordinal();
         Colour col = Light.getColour(light);
         int nx = Light.getX(light) + DX[ord];
         int ny = Light.getY(light) + DY[ord];
+        if (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
+            short incrementedLight = Light.create(nx, ny, Light.getColour(light), Light.getOrientation(light));
+            grid[nx][ny].light = incrementedLight;
+            lightProcessingQueue.add(incrementedLight);
+        }
+        // timeSpentIncrementingLight += System.currentTimeMillis() - incrementTime;
+    }
 
-        while (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny)) {
-            GridCell cell = grid[nx][ny];
-            if (cell.cellStaticItem == WALL) break;
+    /**
+     * Solve level using C++ solver via JSON over stdin/stdout
+     * Uses ProcessBuilder to spawn C++ solver as subprocess
+     *
+     * @param grid The grid to solve
+     * @param emptySpots List of empty spots where DGOs can be placed
+     * @param dgoQueue List of dynamic grid objects to place
+     * @param iterationSpotIndex For symmetry breaking
+     * @return true if solution found
+     */
+    public boolean solveLevelCPP(GridCell[][] grid, ArrayList<Pair<Integer, Integer>> emptySpots,
+                                  LinkedList<DynamicGridObject> dgoQueue, int iterationSpotIndex) {
+        try {
+            // Serialize input to JSON
+            String inputJSON = serializeToJSON(emptySpots, dgoQueue);
 
-            short currentLight = Light.create(nx, ny, col, FaceOrientation.CACHED_VALUES[ord]);
-            cell.light = currentLight;
+            // Spawn C++ solver process (native executable built in src/cpp/solver)
+            ProcessBuilder pb = new ProcessBuilder("./solver");
+            pb.directory(new File("src/cpp/solver"));
+            pb.redirectErrorStream(true);
 
-            // If it's a collision point (DGO or Receiver), add to queue and stop ray
-            if (cell.cellDynamicItem != null || cell.cellStaticItem != EMPTY) {
-                lightProcessingQueue.add(currentLight);
-                break;
+            Process proc = pb.start();
+
+            // Write input to process stdin
+            try (OutputStream os = proc.getOutputStream()) {
+                os.write(inputJSON.getBytes("UTF-8"));
+                os.flush();
             }
 
-            // It's empty space: record directly for reset since we skip the queue
-            if (litCount >= litSpotX.length) {
-                resizeLitSpotArrays();
+            // Read output from process stdout
+            StringBuilder output = new StringBuilder();
+            try (InputStream is = proc.getInputStream();
+                 BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"))) {
+                int ch;
+                while ((ch = br.read()) != -1) {
+                    output.append((char) ch);
+                }
             }
-            litSpotX[litCount] = nx;
-            litSpotY[litCount] = ny;
-            litCount++;
 
-            nx += DX[ord];
-            ny += DY[ord];
+            // Wait for process to complete
+            int exitCode = proc.waitFor();
+
+            if (exitCode != 0) {
+                System.err.println("C++ solver process failed with exit code: " + exitCode);
+                System.err.println("Output: " + output.toString());
+                return false;
+            }
+
+            // Deserialize output JSON
+            String outStr = output.toString();
+            System.out.println("C++ solver raw output: \n" + outStr);
+            return deserializeFromJSON(outStr, grid);
+
+        } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.err.println("Error communicating with C++ solver: " + e.getMessage());
+            return false;
         }
     }
 
@@ -403,6 +447,260 @@ public class LevelSolver {
         System.arraycopy(litSpotY, 0, nY, 0, litSpotY.length);
         litSpotX = nX;
         litSpotY = nY;
+    }
+
+    /**
+     * Serialize solver state to JSON for C++ solver
+     */
+    private String serializeToJSON(ArrayList<Pair<Integer, Integer>> emptySpots,
+                                    LinkedList<DynamicGridObject> dgoQueue) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        sb.append("   \"gridWidth\": ").append(gridWidth).append(",\n");
+        sb.append("   \"gridHeight\": ").append(gridHeight).append(",\n");
+
+        // emptySpots
+        sb.append("   \"emptySpots\": [");
+        boolean first = true;
+        for (Pair<Integer, Integer> spot : emptySpots) {
+            if (!first) sb.append(", ");
+            sb.append("[").append(spot.getKey()).append(", ").append(spot.getValue()).append("]");
+            first = false;
+        }
+        sb.append("],\n");
+
+        // receiverSpots
+        sb.append("   \"receiverSpots\": [");
+        first = true;
+        for (Pair<Integer, Integer> spot : receiverSpots) {
+            if (!first) sb.append(", ");
+            sb.append("[").append(spot.getKey()).append(", ").append(spot.getValue()).append("]");
+            first = false;
+        }
+        sb.append("],\n");
+
+        // dgoQueue
+        sb.append("   \"dgoQueue\": [");
+        first = true;
+        for (DynamicGridObject dgo : dgoQueue) {
+            if (!first) sb.append(", ");
+            sb.append("{\n");
+            sb.append("      \"type\": \"").append(dgo.getClass().getSimpleName()).append("\",\n");
+
+            if (dgo instanceof LightSource) {
+                LightSource ls = (LightSource) dgo;
+                sb.append("      \"orientation\": ").append(ls.orientation.ordinal()).append("\n");
+            } else if (dgo instanceof Prism) {
+                Prism p = (Prism) dgo;
+                sb.append("      \"orientation\": ").append(p.orientation.ordinal()).append("\n");
+            } else if (dgo instanceof TJunction) {
+                TJunction tj = (TJunction) dgo;
+                sb.append("      \"orientation\": ").append(tj.orientation.ordinal()).append("\n");
+            } else if (dgo instanceof ForwardMirror) {
+                sb.append("      \"orientation\": 0\n");
+            } else if (dgo instanceof BackwardMirror) {
+                sb.append("      \"orientation\": 0\n");
+            } else if (dgo instanceof Filter) {
+                Filter f = (Filter) dgo;
+                sb.append("      \"orientation\": 0,\n");
+                sb.append("      \"colour\": ").append(f.colour.ordinal()).append("\n");
+            } else if (dgo instanceof ColourShifter) {
+                ColourShifter cs = (ColourShifter) dgo;
+                sb.append("      \"orientation\": ").append(cs.orientation.ordinal()).append(",\n");
+                sb.append("      \"colour\": ").append(cs.colour.ordinal()).append("\n");
+            }
+
+            sb.append("      \"validSpots\": []\n");
+            sb.append("   }");
+            first = false;
+        }
+        sb.append("]\n");
+        sb.append("}\n");
+
+        return sb.toString();
+    }
+
+    /**
+     * Deserialize C++ solver output JSON
+     */
+    private boolean deserializeFromJSON(String json, GridCell[][] grid) {
+        try {
+            // Parse JSON manually but defensively
+            int solutionFoundIdx = json.indexOf("\"solutionFound\"");
+            if (solutionFoundIdx == -1) {
+                System.err.println("Invalid JSON response");
+                return false;
+            }
+
+            boolean solutionFound = json.substring(solutionFoundIdx).contains("\"solutionFound\": true");
+
+            // attemptPermutations
+            attemptPermutations = 0;
+            int attemptPermsIdx = json.indexOf("\"attemptPermutations\"");
+            if (attemptPermsIdx != -1) {
+                int attemptEnd = json.indexOf(",", attemptPermsIdx);
+                if (attemptEnd == -1) attemptEnd = json.indexOf("}", attemptPermsIdx);
+                if (attemptEnd > attemptPermsIdx) {
+                    String attemptStr = json.substring(attemptPermsIdx + "\"attemptPermutations\":".length(), attemptEnd).trim();
+                    try { attemptPermutations = Long.parseLong(attemptStr); } catch (NumberFormatException ignored) { }
+                }
+            }
+
+            // totalPermutations
+            totalPermutations = BigInteger.ZERO;
+            int totalPermsIdx = json.indexOf("\"totalPermutations\"");
+            if (totalPermsIdx != -1) {
+                int totalEnd = json.indexOf(",", totalPermsIdx);
+                if (totalEnd == -1) totalEnd = json.indexOf("}", totalPermsIdx);
+                if (totalEnd > totalPermsIdx) {
+                    String totalStr = json.substring(totalPermsIdx + "\"totalPermutations\":".length(), totalEnd).trim();
+                    try { totalPermutations = new BigInteger(totalStr); } catch (Exception ignored) { totalPermutations = BigInteger.ZERO; }
+                }
+            }
+
+            // timeSpent
+            long timeSpent = 0;
+            int timeIdx = json.indexOf("\"timeSpent\"");
+            if (timeIdx != -1) {
+                int timeEnd = json.indexOf(",", timeIdx);
+                if (timeEnd == -1) timeEnd = json.indexOf("}", timeIdx);
+                if (timeEnd > timeIdx) {
+                    String timeStr = json.substring(timeIdx + "\"timeSpent\":".length(), timeEnd).trim();
+                    try { timeSpent = Long.parseLong(timeStr); } catch (NumberFormatException ignored) { }
+                }
+            }
+
+            System.out.println("C++ solver time: " + timeSpent + "ms");
+            System.out.println("C++ solver permutations: " + attemptPermutations);
+
+            if (solutionFound) {
+                int gridStart = json.indexOf("\"solutionGrid\"");
+                if (gridStart == -1) {
+                    solutionGrid = grid;
+                    return true;
+                }
+
+                int gridArrStart = json.indexOf("[", gridStart);
+                if (gridArrStart == -1) {
+                    solutionGrid = grid;
+                    return true;
+                }
+
+                // Find matching closing bracket for the solutionGrid array
+                int depth = 0;
+                int gridArrEnd = -1;
+                for (int i = gridArrStart; i < json.length(); i++) {
+                    char c = json.charAt(i);
+                    if (c == '[') depth++;
+                    else if (c == ']') {
+                        depth--;
+                        if (depth == 0) { gridArrEnd = i; break; }
+                    }
+                }
+
+                if (gridArrEnd == -1 || gridArrEnd <= gridArrStart) {
+                    solutionGrid = grid;
+                    return true;
+                }
+
+                String gridJson = json.substring(gridArrStart, gridArrEnd + 1);
+
+                // Parse grid rows defensively
+                int rowStart = 0;
+                int row = 0;
+
+                while (true) {
+                    int colStart = gridJson.indexOf("[", rowStart);
+                    if (colStart == -1) break;
+                    int colEnd = gridJson.indexOf("]", colStart);
+                    if (colEnd == -1) break;
+
+                    String rowStr = gridJson.substring(colStart + 1, colEnd);
+                    String[] cells = rowStr.split(",");
+
+                    for (int col = 0; col < cells.length && row < gridHeight; col++) {
+                        String cell = cells[col].trim().replace("\"", "").replace(" ", "");
+                        if (!cell.isEmpty() && !"void".equals(cell)) {
+                            // Parse cell type
+                            if (cell.startsWith("uL") || cell.startsWith("dL") ||
+                                cell.startsWith("lL") || cell.startsWith("rL")) {
+                                // LightSource
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dL")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lL")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rL")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new LightSource(orient);
+                            } else if (cell.startsWith("uP") || cell.startsWith("dP") ||
+                                        cell.startsWith("lP") || cell.startsWith("rP")) {
+                                // Prism
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dP")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lP")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rP")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new Prism(orient);
+                            } else if (cell.startsWith("uT") || cell.startsWith("dT") ||
+                                        cell.startsWith("lT") || cell.startsWith("rT")) {
+                                // TJunction
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dT")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lT")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rT")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new TJunction(orient);
+                            } else if (cell.startsWith("uM") || cell.startsWith("dM") ||
+                                        cell.startsWith("lM") || cell.startsWith("rM")) {
+                                // Mirror
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dM")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lM")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rM")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new BackwardMirror();
+                            } else if ("rF".equals(cell)) {
+                                grid[col][row].cellDynamicItem = new RedFilter();
+                            } else if ("bF".equals(cell)) {
+                                grid[col][row].cellDynamicItem = new BlueFilter();
+                            } else if ("yF".equals(cell)) {
+                                grid[col][row].cellDynamicItem = new YellowFilter();
+                            } else if (cell.startsWith("uR") || cell.startsWith("dR") ||
+                                        cell.startsWith("lR") || cell.startsWith("rR")) {
+                                // ColourShifter
+                                FaceOrientation orient = FaceOrientation.UP;
+                                Colour colour = Colour.RED;
+                                if (cell.startsWith("dR")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lR")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rR")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new ColourShifter(orient, colour);
+                            } else if (cell.startsWith("uB") || cell.startsWith("dB") ||
+                                        cell.startsWith("lB") || cell.startsWith("rB")) {
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dB")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lB")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rB")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new ColourShifter(orient, Colour.BLUE);
+                            } else if (cell.startsWith("uY") || cell.startsWith("dY") ||
+                                        cell.startsWith("lY") || cell.startsWith("rY")) {
+                                FaceOrientation orient = FaceOrientation.UP;
+                                if (cell.startsWith("dY")) orient = FaceOrientation.DOWN;
+                                else if (cell.startsWith("lY")) orient = FaceOrientation.LEFT;
+                                else if (cell.startsWith("rY")) orient = FaceOrientation.RIGHT;
+                                grid[col][row].cellDynamicItem = new ColourShifter(orient, Colour.YELLOW);
+                            }
+                        }
+                    }
+
+                    row++;
+                    rowStart = colEnd + 1;
+                }
+
+                solutionGrid = grid;
+            }
+
+            return solutionFound;
+
+        } catch (Exception e) {
+            System.err.println("Error parsing C++ solver output: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

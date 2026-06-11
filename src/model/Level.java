@@ -22,7 +22,7 @@ public class Level {
         Gson gson = new Gson();
         Level loadedLevel = null;
         try {
-            FileReader fileReader = new FileReader("src\\saveFiles\\" + saveFileName + ".json");
+            FileReader fileReader = new FileReader("src/saveFiles/" + saveFileName + ".json");
             JsonReader reader = new JsonReader(fileReader);
             loadedLevel = gson.fromJson(reader, Level.class);
         } catch (FileNotFoundException e) {
@@ -37,7 +37,7 @@ public class Level {
         Gson gson = new Gson();
         String saveFileJSON = gson.toJson(level);
         try {
-            FileWriter writer = new FileWriter("src\\saveFiles\\" + level.title + ".json");
+            FileWriter writer = new FileWriter("src/saveFiles/" + level.title + ".json");
             writer.write(saveFileJSON);
             writer.close();
         } catch (IOException e) {

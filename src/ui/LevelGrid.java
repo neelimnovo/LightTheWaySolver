@@ -386,12 +386,12 @@ public class LevelGrid {
     }
 
     private static void setupImageMap() {
-        File levelsFolder = new File("resources\\images\\");
+        File levelsFolder = new File("resources/images/");
         String[] images = levelsFolder.list();
         for (int i = 0; i < images.length; i++) {
             FileInputStream input = null;
             try {
-                input = new FileInputStream("resources\\images\\" + images[i]);
+                input = new FileInputStream("resources/images/" + images[i]);
                 Image image = new Image(input);
                 ImageView imageView = new ImageView(image);
                 imageMap.put(images[i], imageView);
@@ -565,7 +565,7 @@ public class LevelGrid {
 
     public static ImageView readResourceImage(String image) {
         try {
-            return new ImageView(new Image(new FileInputStream("resources\\images\\" + image)));
+            return new ImageView(new Image(new FileInputStream("resources/images/" + image)));
         } catch (FileNotFoundException e) {
             System.out.println("Couldn't load images");
             e.printStackTrace();
