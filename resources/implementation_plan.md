@@ -131,6 +131,11 @@ light source pointing into open space still doesn't reach the receiver.
 
 ### A1. Beam-directed (ray-guided) search — the structural fix ⭐
 
+> **A full implementation plan for this item now lives in
+> [`beam_directed_search_design.md`](beam_directed_search_design.md)** — data structures,
+> pseudocode, the derived physics table, edge cases, the validation harness, and
+> milestones M1–M9. The sketch below is the summary.
+
 Stop enumerating positions for each object. Instead **follow the light and decide
 at each cell the beam enters whether to put something there.**
 
