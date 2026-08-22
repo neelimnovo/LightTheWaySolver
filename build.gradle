@@ -67,10 +67,16 @@ tasks.withType(JavaCompile) {
 
 // Run the headless level solver test via CLI
 // Usage: gradle runTest -PlevelName="Level 015.json"
+// Add -Pprofile to print hot-path counters/timings for the solve
+// Add -Pdedupe as well to also count distinct physical light outcomes (slower, more memory)
 task runTest(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'tests.levelTest'
     args = project.hasProperty('levelName') ? [project.property('levelName')] : []
+    if (project.hasProperty('profile')) systemProperty 'solver.profile', 'true'
+    if (project.hasProperty('dedupe')) systemProperty 'solver.profile.dedupe', 'true'
+    // -Pnofilter bypasses all placement heuristics: ground truth for solvability
+    if (project.hasProperty('nofilter')) systemProperty 'solver.nofilter', 'true'
 }
 
 // Run the headless level solver test using the C++ solver

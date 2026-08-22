@@ -18,6 +18,7 @@ import model.interactionObjects.filters.YellowFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 
 import static ui.MainMenu.*;
@@ -561,6 +562,26 @@ public class LevelGrid {
         for (int i = 0; i < rightYellowShifterList.getValue(); i++) {
             gridLayout.colourShifters.add(new ColourShifter(FaceOrientation.RIGHT, Colour.YELLOW));
         }
+    }
+
+    // Decoded images, kept so that repeatedly re-rendering a grid does not re-read from disk
+    private static final HashMap<String, Image> imageCache = new HashMap<>();
+
+    // EFFECTS: Returns a fresh ImageView of the named resource image, reusing the decoded image.
+    // A Node can only sit in one place in the scene graph, so every caller needs its own view
+    public static ImageView newResourceImageView(String image) {
+        Image cached = imageCache.get(image);
+        if (cached == null) {
+            try (FileInputStream input = new FileInputStream("resources/images/" + image)) {
+                cached = new Image(input);
+                imageCache.put(image, cached);
+            } catch (IOException e) {
+                System.out.println("Couldn't load image " + image);
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return new ImageView(cached);
     }
 
     public static ImageView readResourceImage(String image) {

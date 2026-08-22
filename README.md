@@ -50,4 +50,3 @@ TODO
     * shifters
 
 * After beating a record, saving level solution saves solving time as zero seconds
-* optimize isUnblockedMirrorSpot

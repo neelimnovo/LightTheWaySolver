@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ui.LevelRender.createRenderLevelScene;
@@ -21,66 +23,69 @@ public class LevelLoader {
     final static String SOLVED_GREEN = "#69f0ae";
     final static String UNSOLVED_RED = "#ff5252";
 
+    private final static int TILES_PER_ROW = 5;
+
     static Scene createLevelLoaderScene() {
-        ScrollPane scrollPane = new ScrollPane();
+        File solutionsFolder = new File("src/solutionFiles/");
+        List<String> levelsSolutions = listFolder(solutionsFolder).stream()
+                .map(level -> level.replace(" solution.json", ""))
+                .collect(Collectors.toList());
+
+        levelLoadScene = createChooserScene(
+                savedLevelNames(),
+                levelName -> levelsSolutions.contains(levelName) ? SOLVED_GREEN : UNSOLVED_RED,
+                levelName -> mainWindow.setScene(createRenderLevelScene(levelName, Level.load(levelName))));
+
+        return levelLoadScene;
+    }
+
+    // EFFECTS: Names of every level in the saveFiles folder, without the .json extension
+    static List<String> savedLevelNames() {
+        List<String> names = new ArrayList<>();
+        for (String file : listFolder(new File("src/saveFiles/"))) {
+            if (file.endsWith(".json")) {
+                names.add(file.substring(0, file.length() - ".json".length()));
+            }
+        }
+        return names;
+    }
+
+    /**
+     * EFFECTS: Builds a scrolling grid of tiles, one per entry, that hands the chosen entry
+     * to onChoose. Shared by the level browser, the solution drafter and the reference
+     * solution browser so they all look and behave the same.
+     *
+     * @param entries  the names to show, one tile each
+     * @param colourOf the tile colour for a given entry
+     * @param onChoose what to do with the entry the user clicks
+     */
+    static Scene createChooserScene(List<String> entries, Function<String, String> colourOf,
+                                    Consumer<String> onChoose) {
         GridPane gridPane = new GridPane();
         // Rounded corners and subtle shadow to gridPane
         gridPane.setStyle("-fx-background-color:" + SCENE_BLUE + ";"
             + "-fx-background-radius: 16;"
             + "-fx-effect: dropshadow(gaussian, #00000022, 8, 0.2, 0, 2);");
-        File levelsFolder = new File("src/saveFiles/");
-        File solutionsFolder = new File("src/solutionFiles/");
-        String[] levels = levelsFolder.list();
-        List<String> levelsSolutions = new ArrayList<>(Arrays.asList(solutionsFolder.list()));
-        levelsSolutions = levelsSolutions.stream()
-                .map(level -> level.replace(" solution.json", ""))
-                .collect(Collectors.toList());
-        for (int i = 0; i < levels.length; i++) {
-            String levelName = levels[i].substring(0, levels[i].indexOf('.'));
-            Button levelButton = new Button(levelName);
-            // Large, rounded, bold font, subtle shadow
-            String baseStyle = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-radius: 12;";
-            String normalEffect = "-fx-effect: dropshadow(gaussian, #00000022, 4, 0.2, 0, 1);";
-            String hoverEffect = "-fx-effect: dropshadow(gaussian, #00000055, 12, 0.3, 0, 4);";
-            levelButton.setStyle(baseStyle + normalEffect);
-            levelButton.setMinWidth(140);
-            levelButton.setMinHeight(48);
-            levelButton.setPadding(new Insets(8, 16, 8, 16));
-            levelButton.setOnMouseEntered(e -> {
-                String current = levelButton.getStyle();
-                // Replace only the -fx-effect property
-                String updated = current.replaceAll("-fx-effect:[^;]*;?", "") + hoverEffect;
-                levelButton.setStyle(updated);
-            });
-            levelButton.setOnMouseExited(e -> {
-                String current = levelButton.getStyle();
-                String updated = current.replaceAll("-fx-effect:[^;]*;?", "") + normalEffect;
-                levelButton.setStyle(updated);
-            });
-            levelButton.setOnAction(event -> {
-                Level level = Level.load(levelName);
-                mainWindow.setScene(createRenderLevelScene(levelName, level));
-            });
-            if (levelsSolutions.contains(levelName)) {
-                changeButtonColour(levelButton, SOLVED_GREEN);
-            } else {
-                changeButtonColour(levelButton, UNSOLVED_RED);
-            }
 
-            gridPane.add(levelButton, i % 5, i / 5);
-            if (i == levels.length - 1) {
-                Button backLevelLoaderButton = makeBackButton(mainMenuScene);
-                backLevelLoaderButton.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 12;");
-                changeButtonColour(backLevelLoaderButton, BUTTON_BLUE);
-                backLevelLoaderButton.setMinWidth(140);
-                backLevelLoaderButton.setMinHeight(48);
-                gridPane.add(backLevelLoaderButton, 0, ((i /5) + 1));
-            }
+        for (int i = 0; i < entries.size(); i++) {
+            String entry = entries.get(i);
+            Button entryButton = makeTile(entry, colourOf.apply(entry), () -> onChoose.accept(entry));
+            gridPane.add(entryButton, i % TILES_PER_ROW, i / TILES_PER_ROW);
         }
+
+        Button backButton = makeBackButton(mainMenuScene);
+        backButton.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 12;");
+        changeButtonColour(backButton, BUTTON_BLUE);
+        backButton.setMinWidth(140);
+        backButton.setMinHeight(48);
+        int lastRow = entries.isEmpty() ? 0 : ((entries.size() - 1) / TILES_PER_ROW) + 1;
+        gridPane.add(backButton, 0, lastRow);
+
         gridPane.setPadding(new Insets(30,30,30,30));
         gridPane.setVgap(20);
         gridPane.setHgap(20);
 
+        ScrollPane scrollPane = new ScrollPane();
         scrollPane.setStyle("-fx-background: " + SCENE_BLUE + ";");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -89,8 +94,40 @@ public class LevelLoader {
         scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> {
             scrollPane.lookup(".viewport").setStyle("-fx-background-color: " + SCENE_BLUE + ";");
         });
-        levelLoadScene = new Scene(scrollPane, SCENE_WIDTH, SCENE_HEIGHT);
 
-        return levelLoadScene;
+        return new Scene(scrollPane, SCENE_WIDTH, SCENE_HEIGHT);
+    }
+
+    // EFFECTS: One large, rounded tile of a chooser grid
+    private static Button makeTile(String text, String colour, Runnable onClick) {
+        Button tile = new Button(text);
+        // Large, rounded, bold font, subtle shadow
+        String baseStyle = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-radius: 12;";
+        String normalEffect = "-fx-effect: dropshadow(gaussian, #00000022, 4, 0.2, 0, 1);";
+        String hoverEffect = "-fx-effect: dropshadow(gaussian, #00000055, 12, 0.3, 0, 4);";
+        tile.setStyle(baseStyle + normalEffect);
+        tile.setMinWidth(140);
+        tile.setMinHeight(48);
+        tile.setPadding(new Insets(8, 16, 8, 16));
+        tile.setOnMouseEntered(e -> {
+            // Replace only the -fx-effect property
+            String updated = tile.getStyle().replaceAll("-fx-effect:[^;]*;?", "") + hoverEffect;
+            tile.setStyle(updated);
+        });
+        tile.setOnMouseExited(e -> {
+            String updated = tile.getStyle().replaceAll("-fx-effect:[^;]*;?", "") + normalEffect;
+            tile.setStyle(updated);
+        });
+        tile.setOnAction(event -> onClick.run());
+        changeButtonColour(tile, colour);
+        return tile;
+    }
+
+    // EFFECTS: Sorted contents of a folder, empty if the folder is missing
+    private static List<String> listFolder(File folder) {
+        String[] files = folder.list();
+        if (files == null) return new ArrayList<>();
+        Arrays.sort(files);
+        return new ArrayList<>(Arrays.asList(files));
     }
 }

@@ -96,7 +96,12 @@ public class levelTest {
         solver.solveLevelOriginal(gridLayout.gridCellArray, emptyPositions, dgoQueue, 0);
         long totalTime = System.currentTimeMillis() - startTime;
 
-        // 6. Print results
+        // 6. Print the profile before results, so it is visible even with no solution
+        if (searchLogic.SolverProfiler.ENABLED) {
+            System.out.println(solver.profiler.report(totalTime));
+        }
+
+        // 7. Print results
         if (solver.solutionGrid != null) {
             Stats statistics = new Stats(solver.solutionGrid, totalTime,
                     solver.totalPermutations, solver.attemptPermutations);

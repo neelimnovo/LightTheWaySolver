@@ -61,14 +61,24 @@ public class LevelSolver {
      *         Interact with Light
      *         Increment Light
      *     Receivers are powered
-     * 
+     *
      */
-    public long timeSpentProjectingLight = 0;
-    public long timeSpentEmittingLight = 0;
-    public long timeSpentSpreadingLight = 0;
-    public long timeSpentInteractingWithLight = 0;
-    public long timeSpentIncrementingLight = 0;
-    public long timeSpentCheckingReceiversPowered = 0;
+
+    // Hot-path instrumentation. Entirely compiled out when solver.profile is unset,
+    // because SolverProfiler.ENABLED is a static final constant.
+    public final SolverProfiler profiler = new SolverProfiler();
+
+    /**
+     * Diagnostic: bypass ALL placement filtering and consider every empty spot for
+     * every DGO. Enormously slower, but it is ground truth for "does this level have
+     * a solution at all?". If a level reports no solution normally but IS solvable
+     * with -Pnofilter, the filtering heuristics are over-strict and are rejecting a
+     * legitimate placement. Usage: gradle runTest -PlevelName="..." -Pnofilter
+     */
+    public static final boolean NO_FILTER = Boolean.getBoolean("solver.nofilter");
+
+    // Total DGOs in the level, used to derive recursion depth for the profiler
+    private int totalDgoCount;
 
 
     public LevelSolver(ArrayList<Pair<Integer, Integer>> receiverSpots, ArrayList<Pair<Integer, Integer>> emptySpots,
@@ -116,6 +126,7 @@ public class LevelSolver {
      * @param initialGrid The initial grid state (only static elements matter for this precomputation).
      */
     public void precomputeStaticFilters(LinkedList<DynamicGridObject> dgoList, GridCell[][] initialGrid) {
+        this.totalDgoCount = dgoList.size();
         Set<DynamicGridObject> processedDGOs = new HashSet<>();
         for (DynamicGridObject currentDgo : dgoList) {
             boolean alreadyProcessed = false;
@@ -142,13 +153,23 @@ public class LevelSolver {
                               LinkedList<DynamicGridObject> dgoQueue, int iterationSpotIndex) {
         if (!dgoQueue.isEmpty()) {
             DynamicGridObject dgo = dgoQueue.remove();
-            
+            if (SolverProfiler.ENABLED) profiler.nodeVisited(totalDgoCount - dgoQueue.size() - 1);
+
             // Use the pre-computed static filtered spots as the base for the dynamic filter
             ArrayList<Pair<Integer, Integer>> baseSpots = staticFilteredSpotsCache.get(dgo);
             if (baseSpots == null) baseSpots = this.emptySpots; // Fallback, though shouldn't happen if precomputation is called
-            
+
             // Perform further dynamic filtering on the base filtered spots
-            ArrayList<Pair<Integer, Integer>> filteredEmptySpots = dgo.filter(grid, baseSpots);
+            ArrayList<Pair<Integer, Integer>> filteredEmptySpots;
+            if (NO_FILTER) {
+                filteredEmptySpots = this.emptySpots;
+            } else {
+                long filterStart = SolverProfiler.ENABLED ? profiler.filterStart() : 0L;
+                filteredEmptySpots = dgo.filter(grid, baseSpots);
+                if (SolverProfiler.ENABLED) {
+                    profiler.filterEnd(filterStart, baseSpots.size(), filteredEmptySpots.size());
+                }
+            }
 
             int filteredSpotsStartIndex = 0;
             // Symmetry breaking: skip spots before iterationSpotIndex
@@ -165,6 +186,7 @@ public class LevelSolver {
                     // If we reach the end without finding a valid index, no further spots are valid
                     if (i == filteredEmptySpots.size() - 1) {
                         // backtrack
+                        if (SolverProfiler.ENABLED) profiler.symmetryPrunes++;
                         dgoQueue.addFirst(dgo);
                         return false;
                     }
@@ -177,6 +199,7 @@ public class LevelSolver {
                 int spotY = spot.getValue();
                 GridCell cell = grid[spotX][spotY];
                 if (cell.cellDynamicItem == null) {
+                    if (SolverProfiler.ENABLED) profiler.placementsTried++;
                     trackLightSources(dgo, spotX, spotY);
                     cell.cellDynamicItem = dgo;
 
@@ -196,11 +219,14 @@ public class LevelSolver {
                     }
 
                     // Backtrack
+                    if (SolverProfiler.ENABLED) profiler.backtracks++;
                     cell.cellDynamicItem = null;
                     if (dgo instanceof LightSource) {
                         sourceSpots.remove(dgo);
                     }
-                    
+
+                } else if (SolverProfiler.ENABLED) {
+                    profiler.spotsRejectedOccupied++;
                 }
             }
             dgoQueue.addFirst(dgo);
@@ -255,11 +281,13 @@ public class LevelSolver {
     // EFFECTS: Starts light projecting for the level until it is complete
     // Then indicates whether level is solved or not
     public boolean projectLight(GridCell[][] grid) {
+        long profileStart = SolverProfiler.ENABLED ? profiler.projectStart() : 0L;
         emitLight(grid);
-        
+
         while (!lightProcessingQueue.isEmpty()) {
             short light = lightProcessingQueue.remove();
-            
+            if (SolverProfiler.ENABLED) profiler.lightQueuePops++;
+
             // Resize litSpot arrays if needed
             // Ideally should not need this if we pre-allocate enough space
             if (litCount >= litSpotX.length) {
@@ -272,14 +300,15 @@ public class LevelSolver {
             spreadLight(light, grid);
         }
         attemptPermutations++;
-        if (allReceiversArePowered(receiverSpots, grid)) {
-
-            System.out.println("Time spent projecting light: " + timeSpentProjectingLight);
-            System.out.println("Time spent emitting light: " + timeSpentEmittingLight);
-            System.out.println("Time spent spreading light: " + timeSpentSpreadingLight);
-            System.out.println("Time spent incrementing light: " + timeSpentIncrementingLight);
-            System.out.println("Time spent checking receivers powered: " + timeSpentCheckingReceiversPowered);
-            
+        boolean solved = allReceiversArePowered(receiverSpots, grid);
+        if (SolverProfiler.ENABLED) {
+            if (SolverProfiler.DEDUPE) {
+                profiler.recordOutcome(litSpotX, litSpotY, litCount, solved);
+            }
+            profiler.litCellsReset += litCount;
+            profiler.projectEnd(profileStart);
+        }
+        if (solved) {
             return true;
         } else {
             // Reset the powered state of all receivers for the next permutation
@@ -297,6 +326,53 @@ public class LevelSolver {
 
             return false;
         }
+    }
+
+    /**
+     * Projects light through a manually drafted grid, i.e. one where a person has placed the
+     * dynamic objects instead of the search. Every light source currently sitting on the grid
+     * emits, and the resulting light trail is deliberately LEFT IN PLACE so the caller can
+     * render it regardless of whether the draft works.
+     *
+     * Unlike {@link #projectLight}, an identical light state is only spread once. A hand drafted
+     * layout can send light around a closed loop of mirrors, which would otherwise queue lights
+     * forever. The packed light short fully describes the state (position, colour, direction) and
+     * spreading is idempotent, so skipping repeats is safe and guarantees termination.
+     *
+     * @param grid the drafted grid, with the drafted dynamic objects already placed on it
+     * @return true if every receiver in the level ends up powered
+     */
+    public boolean projectDraftedLight(GridCell[][] grid) {
+        // Start from a clean slate so the draft can be re-tested after each edit
+        GridLayout.resetLightInGridCellArray(grid);
+        for (Pair<Integer, Integer> spot : receiverSpots) {
+            grid[spot.getKey()][spot.getValue()].receiver.isPowered = false;
+        }
+        lightProcessingQueue.clear();
+        litCount = 0;
+
+        sourceSpots.clear();
+        for (int x = 0; x < gridWidth; x++) {
+            for (int y = 0; y < gridHeight; y++) {
+                trackLightSources(grid[x][y].cellDynamicItem, x, y);
+            }
+        }
+
+        // A light short only ever uses its low 12 bits (4 for x, 4 for y, 2 for colour, 2 for direction)
+        boolean[] alreadySpread = new boolean[1 << 12];
+        emitLight(grid);
+        while (!lightProcessingQueue.isEmpty()) {
+            short light = lightProcessingQueue.remove();
+            int lightState = light & 0x0FFF;
+            if (alreadySpread[lightState]) continue;
+            alreadySpread[lightState] = true;
+            spreadLight(light, grid);
+        }
+
+        for (Pair<Integer, Integer> spot : receiverSpots) {
+            if (!grid[spot.getKey()][spot.getValue()].receiver.isPowered) return false;
+        }
+        return true;
     }
 
     private boolean allReceiversArePowered(ArrayList<Pair<Integer, Integer>> receiverSpots, GridCell[][] grid) {
@@ -326,6 +402,7 @@ public class LevelSolver {
         if (sgo == EMPTY) {
             DynamicGridObject dgo = grid[x][y].cellDynamicItem;
             if (dgo != null) {
+                if (SolverProfiler.ENABLED) profiler.dgoInteractions++;
                 dgo.interactWithLight(light, grid, lightProcessingQueue);
                 return;
             } else {
@@ -333,10 +410,12 @@ public class LevelSolver {
                 return;
             }
         } else if (sgo == WALL) {
+            if (SolverProfiler.ENABLED) profiler.wallStops++;
             return; // Do nothing
         }
         else {
             // If it is not empty, or a wall, it must be a receiver
+            if (SolverProfiler.ENABLED) profiler.receiverHits++;
             grid[x][y].receiver.powerUp(light);
         }
     }
@@ -373,6 +452,7 @@ public class LevelSolver {
         int nx = Light.getX(light) + DX[ord];
         int ny = Light.getY(light) + DY[ord];
         if (GridLayout.isWithinBounds(this.gridWidth, this.gridHeight, nx, ny) && grid[nx][ny].cellStaticItem != WALL) {
+            if (SolverProfiler.ENABLED) profiler.lightSingleSteps++;
             short incrementedLight = Light.create(nx, ny, Light.getColour(light), Light.getOrientation(light));
             grid[nx][ny].light = incrementedLight;
             lightProcessingQueue.add(incrementedLight);

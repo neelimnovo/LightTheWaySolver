@@ -181,33 +181,37 @@ public class TJunction extends DynamicGridObject {
              */
             case UP:
                 if(dgo instanceof LightSource && ((LightSource) dgo).orientation != UP) return false;
+                // A junction emits perpendicular to its own orientation, so only a
+                // LEFT/RIGHT junction can emit upward into this junction's entrance.
+                // NOTE: this was `!= LEFT || != RIGHT`, which is true for every possible
+                // value -- it rejected EVERY adjacent junction regardless of orientation.
                 if(dgo instanceof TJunction
-                        && (((TJunction) dgo).orientation != LEFT 
-                            || ((TJunction) dgo).orientation != RIGHT)) return false;
+                        && (((TJunction) dgo).orientation != LEFT
+                            && ((TJunction) dgo).orientation != RIGHT)) return false;
                 if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != UP) return false;
                 if(dgo instanceof Prism && ((Prism) dgo).orientation != DOWN) return false;
                 break;
             case DOWN:
                 if(dgo instanceof LightSource && ((LightSource) dgo).orientation != DOWN) return false;
                     if(dgo instanceof TJunction
-                            && (((TJunction) dgo).orientation != LEFT 
-                                || ((TJunction) dgo).orientation != RIGHT)) return false;
+                            && (((TJunction) dgo).orientation != LEFT
+                                && ((TJunction) dgo).orientation != RIGHT)) return false;
                 if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != DOWN) return false;
                 if(dgo instanceof Prism && ((Prism) dgo).orientation != UP) return false;
                 break;
             case LEFT:
                 if(dgo instanceof LightSource && ((LightSource) dgo).orientation != LEFT) return false;
                     if(dgo instanceof TJunction
-                            && (((TJunction) dgo).orientation != UP 
-                                || ((TJunction) dgo).orientation != DOWN)) return false;
+                            && (((TJunction) dgo).orientation != UP
+                                && ((TJunction) dgo).orientation != DOWN)) return false;
                 if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != LEFT) return false;
                 if(dgo instanceof Prism && ((Prism) dgo).orientation != RIGHT) return false;
                 break;
             case RIGHT:
                 if(dgo instanceof LightSource && ((LightSource) dgo).orientation != RIGHT) return false;
                     if(dgo instanceof TJunction
-                            && (((TJunction) dgo).orientation != UP 
-                                || ((TJunction) dgo).orientation != DOWN)) return false;
+                            && (((TJunction) dgo).orientation != UP
+                                && ((TJunction) dgo).orientation != DOWN)) return false;
                 if(dgo instanceof ColourShifter && ((ColourShifter) dgo).orientation != RIGHT) return false;
                 if(dgo instanceof Prism && ((Prism) dgo).orientation != LEFT) return false;
                 break;

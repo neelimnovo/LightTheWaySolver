@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import static ui.LevelLoader.createLevelLoaderScene;
 import static ui.LevelSetup.createLevelSetupScene;
 import static ui.LevelStats.createLevelStatsScene;
+import static ui.ReferenceSolutionViewer.createReferenceSolutionLoaderScene;
+import static ui.SolutionDrafter.createSolutionDraftLoaderScene;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +35,8 @@ public class MainMenu extends Application {
     static Scene levelGridScene;
     static Scene levelLoadScene;
     static Scene levelRenderScene;
+    static Scene solutionDraftLoadScene;
+    static Scene referenceSolutionLoadScene;
     final static int SCENE_WIDTH = 1280;
     final static int SCENE_HEIGHT = 720;
 
@@ -64,19 +68,27 @@ public class MainMenu extends Application {
         Button showLevelStatsButton = new Button("Show level statistics");
         showLevelStatsButton.setOnAction(e -> mainWindow.setScene(createLevelStatsScene()));
 
+        Button draftSolutionButton = new Button("Create level solution");
+        draftSolutionButton.setOnAction(e -> mainWindow.setScene(createSolutionDraftLoaderScene()));
+
+        Button referenceSolutionsButton = new Button("View reference solutions");
+        referenceSolutionsButton.setOnAction(e -> mainWindow.setScene(createReferenceSolutionLoaderScene()));
+
         // Apply consistent material styling
-        changeButtonColour(newLevelButton, BUTTON_BLUE);
-        changeButtonColour(solveLevelButton, BUTTON_BLUE);
-        changeButtonColour(showLevelStatsButton, BUTTON_BLUE);
-        materialiseButton(newLevelButton);
-        materialiseButton(solveLevelButton);
-        materialiseButton(showLevelStatsButton);
+        for (Button button : java.util.List.of(newLevelButton, solveLevelButton, showLevelStatsButton,
+                draftSolutionButton, referenceSolutionsButton)) {
+            changeButtonColour(button, BUTTON_BLUE);
+            materialiseButton(button);
+        }
 
         // Layout
         HBox buttonsRow = new HBox(18, newLevelButton, solveLevelButton, showLevelStatsButton);
         buttonsRow.setAlignment(Pos.CENTER);
 
-        VBox content = new VBox(18, title, subtitle, buttonsRow);
+        HBox solutionRow = new HBox(18, draftSolutionButton, referenceSolutionsButton);
+        solutionRow.setAlignment(Pos.CENTER);
+
+        VBox content = new VBox(18, title, subtitle, buttonsRow, solutionRow);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(40));
 
@@ -89,6 +101,8 @@ public class MainMenu extends Application {
         scene.getAccelerators().put(KeyCombination.keyCombination("Ctrl+N"), () -> newLevelButton.fire());
         scene.getAccelerators().put(KeyCombination.keyCombination("Ctrl+L"), () -> solveLevelButton.fire());
         scene.getAccelerators().put(KeyCombination.keyCombination("Ctrl+S"), () -> showLevelStatsButton.fire());
+        scene.getAccelerators().put(KeyCombination.keyCombination("Ctrl+D"), () -> draftSolutionButton.fire());
+        scene.getAccelerators().put(KeyCombination.keyCombination("Ctrl+R"), () -> referenceSolutionsButton.fire());
 
         // finalise
         mainMenuScene = scene;
